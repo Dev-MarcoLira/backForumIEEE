@@ -2,12 +2,12 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function(knex) {
+export const up = function(knex) {
   
     return knex.schema.createTable("questions", (table) => {
         table.uuid("id").primary();
         table.string("title").notNullable();
-        table.text("description").notNullable();
+        table.text("content").notNullable();
         table.boolean("solved").notNullable().defaultTo(0);
         table.uuid("category_id").notNullable().references("id").inTable("categories").onDelete("CASCADE");
         table.uuid("user_id").notNullable().references("id").inTable("users").onDelete("CASCADE");
@@ -21,6 +21,6 @@ exports.up = function(knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function(knex) {
+export const down = function(knex) {
     return knex.schema.dropTable("questions");
 };
