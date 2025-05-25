@@ -8,5 +8,4 @@ export const findByUsername = username =>
 export const createUser = user => 
     db('users')
         .insert(user)
-        .returning(['id', 'username', 'role'])
         .then(rows => rows[0])
