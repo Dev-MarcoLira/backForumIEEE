@@ -1,31 +1,48 @@
 import express from 'express'
-import * as User from '../models/User.js'
+import * as Reply from '../models/Reply.js'
 import { authenticate } from '../middleware/auth.js';
-
-/* Implementar Model de dúvidas
-    import * as Question from '../models/Question.js'
-
-    
-*/
 
 const router = express.Router()
 
 router.get('/', (req, res) => {
-    res.json({ message: 'Rotas de Perguntas' });
+    res.json({ message: 'Rotas de Respostas' });
 })
 
 router.get('/:id', async (req, res) => {
     const { id } = req.params
     try {
-        const question = await Question.findById(id)
-        if (!question) {
-            return res.status(404).json({ error: 'Question not found' })
-        }
+        const reply = await Reply.findById(id)
+        if (!reply) 
+            return res.status(404).json({ error: 'Reply not found' })
+        
+        res.json({ reply })
     }catch (error) {
-        return res.status(500).json({ error: 'Error fetching question' })
+        return res.status(500).json({ error: 'Error fetching reply' })
     }
 
-    res.json({ question })
+})
+
+router.post('/', authenticate, async (req, res) => {
+
+    const { content, questionId } = req.body
+    const userId = req.user.id
+
+    if (!content || !questionId) {
+        return res.status(400).json({ error: 'Content and questionId are required' })
+    }
+
+    try {
+        const newReply = {
+            content,
+            questionId,
+            userId
+        }
+        
+        await Reply.createReply(newReply)
+        res.status(201).json(newReply)
+    } catch (error) {
+        res.status(500).json({ error: 'Error creating reply' })
+    }
 })
 
 export default router
