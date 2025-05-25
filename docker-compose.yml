@@ -1,18 +1,19 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:15
-    container_name: postgres_db
+  mysql:
+    image: mysql:8
+    container_name: mysql_db
     restart: always
     environment:
-      POSTGRES_USER: docker
-      POSTGRES_PASSWORD: docker
-      POSTGRES_DB: agora
+      MYSQL_ROOT_PASSWORD: docker
+      MYSQL_DATABASE: agora
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
     ports:
-      - "5432:5432"
+      - "3306:3306"
 
   node:
     build:
@@ -22,15 +23,15 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-      DB_HOST: postgres
-      DB_PORT: 5432
+      DB_HOST: mysql
+      DB_PORT: 3306
       DB_USER: docker
       DB_PASSWORD: docker
       DB_NAME: agora
     ports:
       - "3000:3000"
     depends_on:
-      - postgres
+      - mysql
       
 
 
