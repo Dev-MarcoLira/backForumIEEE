@@ -6,17 +6,6 @@ import { v4 } from 'uuid'
 
 const router = express.Router()
 
-router.get('/', (req, res) => {
-    res.json({ message: 'API is working' })
-})
-
-// hello world route
-router.get('/verify', (req, res) => {
-    res.json({ message: 'API is working' });
-});
-
-
-
 // Register route
 
 router.post('/register', async (req, res) => {
@@ -32,11 +21,11 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        const userCreated = await User.createUser(user)        
+        
+        await User.createUser(user)        
         res.status(201).json({ 
-            id: userCreated.id, 
-            username: userCreated.username,
-            role: 'user' 
+            username,
+            role
         })
     } catch (error) {
         res.status(500).json({ error: 'Error creating user' })
