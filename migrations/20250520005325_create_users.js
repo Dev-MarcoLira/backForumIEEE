@@ -9,7 +9,10 @@ export const up = knex => {
     table.string("username").unique().notNullable();
     table.string("password").notNullable();
     table.string("role").notNullable().defaultTo("user"); // user | admin
+    table.timestamp("created_at").defaultTo(knex.fn.now());
+    table.timestamp("updated_at").defaultTo(knex.fn.now());
   });
+
 };
 
 
