@@ -9,6 +9,7 @@
     "dev": "node --watch src/server.js",
     "migrate": "knex migrate:latest --knexfile knexfile.js",
     "migrate:rollback": "knex migrate:rollback --knexfile knexfile.js",
+    "migrate:rollback:all": "knex migrate:rollback --all --knexfile knexfile.js",
     "migrate:make": "knex migrate:make --knexfile knexfile.js"
   },
   "keywords": [],
