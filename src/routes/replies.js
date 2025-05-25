@@ -1,5 +1,6 @@
 import express from 'express'
 import * as User from '../models/User.js'
+import { authenticate } from '../middleware/auth.js';
 
 /* Implementar Model de dúvidas
     import * as Question from '../models/Question.js'
