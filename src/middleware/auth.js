@@ -1,25 +1,35 @@
-import jwt from 'jsonwebtoken'
+require("dotenv").config()
+const e = require("express")
+const jwt = require("jsonwebtoken")
 
-export const authenticate = (req, res, next) => {
+async function autenticate(req, res, next) {
+    try {
+        const auth = req.headers.authorization
+        if (!auth) {
+            throw new Error("Token não encontrado")
+        }
+        const [, token] = auth.split(" ")
+        jwt.verify(token, process.env.JWT_SECRET, (erro, decoded) =>{
+            if (erro) {
+                throw new Error("Token inválido" + erro.message)
+            }else {
+                req.id = decoded.id               
+            }
+            next()
+        })
+        
+     }catch (e) {
+        res.status(401).json({ erro: e.message });
 
-    const authHeader = req.headers.authorization
-    const token = authHeader && authHeader.split(' ')[1]
-
-    if (!token) 
-        return res.status(401).json({ message: 'No token provided' })
-    
-    try{
-        const user = jwt.verify(token, process.env.JWT_SECRET)
-        req.user = user
-        next()
-    }catch {
-        return res.status(403).json({ message: 'Invalid token' })
-    }
+      }
 }
 
-export const requireRole = role => (req, res, next) => {
-    if (req.user.role !== role) {
+const requireRole = role => (req, res, next) => {
+    if (req.user.role !== role)
         return res.status(403).json({ message: 'Forbidden' })
-    }
+    
     next()
 }
+
+
+module.exports = { authenticate, requireRole };

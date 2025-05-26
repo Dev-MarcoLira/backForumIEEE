@@ -1,22 +1,16 @@
-import { config } from "dotenv"
-config()
+require('dotenv').config(); // Carrega o .env automaticamente
 
-
-export default {
-  development: {
-    client: "mysql2",
-    connection: {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-    },
-    migrations: {
-      directory: "./migrations",
-    },
-    seeds: {
-      directory: "./seeds",
-    },
+module.exports = {
+  client: 'mysql',
+  connection: {
+    host: process.env.SERVER_HOST,        // ex: localhost
+    port: process.env.SERVER_DB_PORT,     // ex: 3306
+    user: process.env.SERVER_USER,        // ex: root
+    password: process.env.SERVER_PASSWORD,// ex: 123456
+    database: process.env.SERVER_DB       // ex: projeto
   },
-}
+  migrations: {
+    tablename: 'migrations',
+    directory: `${__dirname}/src/database/migrations`
+  }
+};

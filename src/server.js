@@ -1,16 +1,16 @@
-import { config } from "dotenv";
-config()
+require('dotenv').config();
 
-import express from "express";
-import cors from "cors";
+const express = require("express");
+const cors = require("cors");
 
-import defaultRoutes from "./routes/default.js";
-import protectedRoutes from "./routes/protected.js";
-import accountRoutes from "./routes/account.js";
-import questionRoutes from "./routes/questions.js";
-import authRoutes from "./routes/auth.js";
+const defaultRoutes = require("./routes/default.js");
+const protectedRoutes = require("./routes/protected.js");
+const accountRoutes = require("./routes/account.js");
+const questionRoutes = require("./routes/questions.js");
+const authRoutes = require("./routes/auth.js");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.SERVER_PORT || 3000;
+const HOST = process.env.SERVER_HOST || 'localhost';
 
 const app = express();
 
@@ -29,5 +29,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/conta", accountRoutes)
 app.use("/api/admin", protectedRoutes)
 
-app.listen(PORT, 
-    () => console.log(`Server is running on port ${PORT}`))
+app.listen(PORT, HOST, () => {
+  console.log(`Servidor rodando em http://${HOST}:${PORT}`)
+})
