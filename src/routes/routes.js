@@ -1,13 +1,14 @@
-const router = require('express').Router() 
-//const router = express.Router() //erro aqui
-const userControlle = require("../controller/userControlle")
-const auth = require("../middleware/auth")
-router.get("/ver/usuarios", userControlle.readUser)
-router.post("/login", userControlle.login)
-router.post("/criar/usuario", userControlle.createUser)
-router.patch("/atualizar/usuario/:id", userControlle.updateUser)
-router.delete("/deletar/usuario/:id", userControlle.deleteUser)
+// src/routes/userRoutes.js
+const router = require('express').Router();
+const userController = require("../controller/userControlle");
+const authMiddleware = require("../middleware/auth");
 
-module.exports = router
+// Rotas públicas
+router.post("/api/usuarios/login", userController.login);      
+router.post("/api/usuarios", userController.createUser);        
+router.get("/api/usuarios/:id/perfil", userController.readUser); 
+router.get("/api/conta", authMiddleware, userController.handleObterPropriaConta); 
+router.delete("/api/conta", authMiddleware, userController.deleteUser);     
+router.patch("/api/conta", authMiddleware, userController.updateUser);      
 
-
+module.exports = router;
