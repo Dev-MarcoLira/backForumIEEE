@@ -1,8 +1,8 @@
 import db from '../db/knex.js'
 
-export const findByName = name =>
+export const findById = id =>
     db('categories')
-        .where({ description: name })
+        .where({ id })
         .first()
 
 export const createCategory = category =>
@@ -21,3 +21,13 @@ export const updateCategory = (name, category) =>
         .where({ description: name })
         .update(category)
         .then(count => count > 0)
+
+export const findAll = () =>
+    db('categories')
+        .select('id', 'description', 'created_at', 'updated_at')
+        .then(rows => rows.map(row => ({
+            id: row.id,
+            description: row.description,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at
+        })))
