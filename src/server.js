@@ -10,6 +10,7 @@ import accountRoutes from "./routes/account.js";
 import questionRoutes from "./routes/questions.js";
 import repliesRoutes from "./routes/replies.js";
 import authRoutes from "./routes/auth.js";
+import categoriesRoutes from "./routes/categories.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", defaultRoutes);
 app.use("/api/duvidas", questionRoutes);
 app.use("/api/respostas", repliesRoutes);
+app.use("/api/categorias", categoriesRoutes);
 app.use("/api/auth", authRoutes);
 
 // Protected Routes
