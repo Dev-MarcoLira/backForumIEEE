@@ -5,7 +5,7 @@
 export const up = function(knex) {
   
     return knex.schema.createTable("questions", (table) => {
-        table.uuid("id").primary();
+        table.uuid("id").primary().defaultTo(knex.fn.uuid());
         table.string("title").notNullable();
         table.text("content").notNullable();
         table.boolean("solved").notNullable().defaultTo(0);

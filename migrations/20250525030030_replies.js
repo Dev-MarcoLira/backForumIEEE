@@ -4,7 +4,7 @@
  */
 export const up = function(knex) {
     return knex.schema.createTable("replies", (table) => {
-        table.uuid("id").primary();
+        table.uuid("id").primary().defaultTo(knex.fn.uuid());
         table.text("content").notNullable();
         table.uuid("user_id").notNullable().references("id").inTable("users").onDelete("CASCADE");
         table.uuid("question_id").notNullable().references("id").inTable("questions").onDelete("CASCADE");

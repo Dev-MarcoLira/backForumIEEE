@@ -4,7 +4,7 @@
  */
 export const up = function(knex) {
     return knex.schema.createTable("categories", (table) => {
-        table.uuid("id").primary();
+        table.uuid("id").primary().defaultTo(knex.fn.uuid());
         table.string("description", 255).notNullable().unique().checkLength("<", 256);
         table.timestamp("created_at").defaultTo(knex.fn.now());
         table.timestamp("updated_at").defaultTo(knex.fn.now());
