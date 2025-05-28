@@ -17,7 +17,6 @@ router.post('/register', async (req, res) => {
         username,
         password: hashedPassword,
         role: role || 'user',
-        id: v4() // Generate a unique ID for the user
     }
 
     try {
@@ -51,7 +50,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign(
             { id: user.id, role: user.role, username: user.username, role: user.role }, 
             process.env.JWT_SECRET, 
-            { expiresIn: '1h' }
+            { expiresIn: `${24 * 5}h` }
         )
         res.json({ token })
     } catch (error) {
