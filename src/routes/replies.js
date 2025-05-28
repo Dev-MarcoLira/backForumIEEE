@@ -1,11 +1,17 @@
 import express from 'express'
 import * as Reply from '../models/Reply.js'
 import { authenticate } from '../middleware/auth.js';
+import { v4 } from 'uuid';
 
 const router = express.Router()
 
 router.get('/', (req, res) => {
-    res.json({ message: 'Rotas de Respostas' });
+    try {
+        const replies = Reply.findAll()
+        res.json({ replies })
+    } catch (error) {
+        return res.status(500).json({ error: 'Error fetching replies' })
+    }
 })
 
 router.get('/:id', async (req, res) => {
@@ -34,8 +40,8 @@ router.post('/', authenticate, async (req, res) => {
     try {
         const newReply = {
             content,
-            questionId,
-            userId
+            "question_id": questionId,
+            "user_id": userId
         }
         
         await Reply.createReply(newReply)

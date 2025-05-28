@@ -1,11 +1,17 @@
 import express from 'express'
 import * as Question from '../models/Question.js'
 import { authenticate } from '../middleware/auth.js'
+import { v4 } from 'uuid'
 
 const router = express.Router()
 
 router.get('/', (req, res) => {
-    res.json({ message: 'Rotas de Perguntas' });
+    try{
+        const questions = Question.findAll()
+        res.json({ questions })
+    }catch (error) {
+        return res.status(500).json({ error: 'Error fetching questions' })
+    }
 })
 
 router.get('/:id', async (req, res) => {
