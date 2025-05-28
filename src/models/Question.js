@@ -28,3 +28,15 @@ export const findByCategoryName = categoryName =>
         .where('categories.description', categoryName)
         .select('questions.*')
         .then(rows => rows)
+
+export const findAll = () =>
+    db('categories')
+        .select('id', 'title', 'category_id', 'content', 'created_at', 'updated_at')
+        .then(rows => rows.map(row => ({
+            id: row.id,
+            title: row.title,
+            content: row.content,
+            categoryId: row.category_id,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at
+        })))

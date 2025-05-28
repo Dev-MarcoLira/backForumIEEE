@@ -21,3 +21,16 @@ export const updateReply = (id, reply) =>
         .where({ id })
         .update(reply)
         .then(count => count > 0)
+
+export const findAll = () =>
+    db('categories')
+        .select('id', 'content', 'question_id', 'user_id', 'created_at', 'updated_at')
+        .then(rows => rows.map(row => ({
+            id: row.id,
+            questionId: row.question_id,
+            userId: row.user_id,
+            content: row.content,
+            categoryId: row.category_id,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at
+        })))

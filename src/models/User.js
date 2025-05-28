@@ -21,3 +21,14 @@ export const updateUser = (username, user) =>
         .where({ username })
         .update(user)
         .then(count => count > 0)
+
+export const findAll = () =>
+    db('users')
+        .select('id', 'name', 'username', 'created_at', 'updated_at')
+        .then(rows => rows.map(row => ({
+            id: row.id,
+            name: row.name,
+            username: row.username,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at
+        })))
