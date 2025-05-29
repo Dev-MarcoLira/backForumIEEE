@@ -1,10 +1,5 @@
 import db from '../db/knex.js'
 
-export const findById = id =>
-    db('replies')
-        .where({ id })
-        .first()
-
 export const createReply = reply =>
     db('replies')
         .insert(reply)
@@ -21,6 +16,23 @@ export const updateReply = (id, reply) =>
         .where({ id })
         .update(reply)
         .then(count => count > 0)
+
+export const findById = id =>
+    db('replies')
+        .where({ id })
+        .first()
+
+export const findByQuestionId = questionId =>
+    db('replies')
+        .where({ question_id: questionId })
+        .select('id', 'content', 'user_id', 'created_at', 'updated_at')
+        .then(rows => rows.map(row => ({
+            id: row.id,
+            content: row.content,
+            userId: row.user_id,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at
+        })))
 
 export const findAll = () =>
     db('categories')
