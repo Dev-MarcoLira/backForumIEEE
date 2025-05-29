@@ -1,7 +1,6 @@
 import express from 'express'
 import * as Question from '../models/Question.js'
 import { authenticate } from '../middleware/auth.js'
-import { v4 } from 'uuid'
 
 const router = express.Router()
 

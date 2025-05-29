@@ -1,7 +1,6 @@
 import express from 'express'
 import * as Category from '../models/Category.js'
 import { authenticate } from '../middleware/auth.js'
-import { v4 } from 'uuid'
 
 const router = express.Router()
 
