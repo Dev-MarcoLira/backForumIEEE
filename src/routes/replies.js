@@ -1,7 +1,6 @@
 import express from 'express'
 import * as Reply from '../models/Reply.js'
 import { authenticate } from '../middleware/auth.js';
-import { v4 } from 'uuid';
 
 const router = express.Router()
 
@@ -26,6 +25,19 @@ router.get('/:id', async (req, res) => {
         return res.status(500).json({ error: 'Error fetching reply' })
     }
 
+})
+
+router.get('/question/:questionId', async (req, res) => {
+    const { questionId } = req.params
+    try {
+        const replies = await Reply.findByQuestionId(questionId)
+        if (!replies || replies.length === 0) 
+            return res.status(404).json({ error: 'No replies found for this question' })
+        
+        res.json({ replies })
+    } catch (error) {
+        return res.status(500).json({ error: 'Error fetching replies for question' })
+    }
 })
 
 router.post('/', authenticate, async (req, res) => {
