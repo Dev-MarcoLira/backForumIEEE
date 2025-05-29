@@ -2,7 +2,6 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import * as User from '../models/User.js'
-import { v4 } from 'uuid'
 
 const router = express.Router()
 
@@ -10,10 +9,11 @@ const router = express.Router()
 
 router.post('/register', async (req, res) => {
     
-    const { username, password, role } = req.body
+    const { name, username, password, role } = req.body
     const hashedPassword = await bcrypt.hash(password, 10)
 
     const user = {
+        name,
         username,
         password: hashedPassword,
         role: role || 'user',
