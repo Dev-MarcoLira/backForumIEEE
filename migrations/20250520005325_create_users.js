@@ -6,6 +6,7 @@ export const up = knex => {
     
   return knex.schema.createTable("users", (table) => {
     table.uuid("id").primary().defaultTo(knex.fn.uuid());
+    table.string("name").notNullable();
     table.string("username").unique().notNullable();
     table.string("password").notNullable();
     table.string("role").notNullable().defaultTo("user"); // user | admin
