@@ -30,13 +30,16 @@ export const findByCategoryName = categoryName =>
         .then(rows => rows)
 
 export const findAll = () =>
-    db('categories')
-        .select('id', 'title', 'category_id', 'content', 'created_at', 'updated_at')
+    db('questions')
+        .join('categories', 'questions.category_id', 'categories.id')
+        .select('id', 'title', 'category_id', 'content', 'created_at', 'updated_at',
+             'categories.description as category_description')
         .then(rows => rows.map(row => ({
             id: row.id,
             title: row.title,
             content: row.content,
             categoryId: row.category_id,
+            categoryDescription: row.category_description,
             createdAt: row.created_at,
             updatedAt: row.updated_at
         })))
