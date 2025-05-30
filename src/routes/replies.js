@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
 
 })
 
-router.get('/question/:questionId', async (req, res) => {
+router.get('/pergunta/:questionId', async (req, res) => {
     const { questionId } = req.params
     try {
         const replies = await Reply.findByQuestionId(questionId)
