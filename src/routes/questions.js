@@ -66,4 +66,30 @@ router.delete('/:id', authenticate, async (req, res) => {
     }
 })
 
-module.exports = router;
+router.put('/:id', authenticate, async (req, res) => {
+    const { id } = req.params
+    const { title, content, categoryId } = req.body
+    
+    if (!title || !content || !categoryId) {
+        return res.status(400).json({ error: 'Title, content and categoryId are required' })
+    }
+    
+    try {
+        const updatedQuestion = {
+            title,
+            content,
+            "category_id": categoryId,
+        }
+        
+        const updated = await Question.updateQuestion(id, updatedQuestion)
+        
+        if (!updated) 
+            return res.status(404).json({ error: 'Question not found' })
+        
+        res.json({ updatedQuestion })
+    } catch (error) {
+        res.status(500).json({ error: error.message || 'Error updating question' })
+    }
+})
+
+module.exports = router
