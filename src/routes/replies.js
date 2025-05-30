@@ -52,7 +52,7 @@ router.post('/', authenticate, async (req, res) => {
         const newReply = {
             content,
             "question_id": questionId,
-            "user_id": userId
+            "user_id": userId,
         }
         
         await Reply.createReply(newReply)

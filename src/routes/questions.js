@@ -29,10 +29,10 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', authenticate, async (req, res) => {
     
-    const { title, content, userId, categoryId } = req.body
-    // const userId = req.user.id
+    const { title, content, categoryId } = req.body
+    const userId = req.user.id
     
-    if (!title || !content || !userId || !categoryId) {
+    if (!title || !content || !categoryId) {
         return res.status(400).json({ error: 'Title and content are required' })
     }
     
