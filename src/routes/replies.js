@@ -62,4 +62,20 @@ router.post('/', authenticate, async (req, res) => {
     }
 })
 
+router.delete('/:id', authenticate, async (req, res) => {
+    const { id } = req.params
+    
+    try {
+        const deleted = await Reply.deleteReply(id)
+
+        if(!deleted) 
+            return res.status(404).json({ error: 'Reply not found' })
+
+        res.json({ message: 'Reply deleted successfully' })
+
+    }catch(error){
+        return res.status(500).json({ error: error.message || 'Error deleting reply' })
+    }
+})
+
 module.exports = router;
