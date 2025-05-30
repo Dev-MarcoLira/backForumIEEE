@@ -35,7 +35,7 @@ const findByQuestionId = questionId =>
         })))
 
 const findAll = () =>
-    db('categories')
+    db('replies')
         .select('id', 'content', 'question_id', 'user_id', 'created_at', 'updated_at')
         .then(rows => rows.map(row => ({
             id: row.id,

@@ -3,12 +3,12 @@ const { authenticate } = require('../middleware/auth.js')
 
 const router = require('express').Router();
 
-router.get('/', (req, res) => {
+router.get('/', async(req, res) => {
     try {
-        const replies = Reply.findAll()
+        const replies = await Reply.findAll()
         res.json({ replies })
     } catch (error) {
-        return res.status(500).json({ error: 'Error fetching replies' })
+        return res.status(500).json({ error: error.message || 'Error fetching replies' })
     }
 })
 
