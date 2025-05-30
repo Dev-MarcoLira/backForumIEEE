@@ -1,28 +1,28 @@
-import db from '../db/knex.js'
+const db = require('../db/knex.js')
 
-export const findByUsername = username => 
+const findByUsername = username => 
     db('users')
         .where({ username })
         .first()
 
-export const createUser = user => 
+const createUser = user => 
     db('users')
         .insert(user)
         .then(rows => rows[0])
 
-export const deleteUser = username =>
+const deleteUser = username =>
     db('users')
         .where({ username })
         .del()
         .then(count => count > 0)
 
-export const updateUser = (username, user) =>
+const updateUser = (username, user) =>
     db('users')
         .where({ username })
         .update(user)
         .then(count => count > 0)
 
-export const findAll = () =>
+const findAll = () =>
     db('users')
         .select('id', 'name', 'username', 'created_at', 'updated_at')
         .then(rows => rows.map(row => ({
@@ -32,3 +32,11 @@ export const findAll = () =>
             createdAt: row.created_at,
             updatedAt: row.updated_at
         })))
+
+module.exports = {
+    findByUsername,
+    createUser,
+    deleteUser,
+    updateUser,
+    findAll
+}

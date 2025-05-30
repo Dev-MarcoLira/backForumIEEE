@@ -1,8 +1,7 @@
-import express from 'express'
-import * as Reply from '../models/Reply.js'
-import { authenticate } from '../middleware/auth.js';
+const Reply = require('../models/Reply.js')
+const { authenticate } = require('../middleware/auth.js')
 
-const router = express.Router()
+const router = require('express').Router();
 
 router.get('/', (req, res) => {
     try {
@@ -24,7 +23,7 @@ router.get('/:id', async (req, res) => {
     }catch (error) {
         return res.status(500).json({ error: 'Error fetching reply' })
     }
-
+    
 })
 
 router.get('/pergunta/:questionId', async (req, res) => {
@@ -41,14 +40,14 @@ router.get('/pergunta/:questionId', async (req, res) => {
 })
 
 router.post('/', authenticate, async (req, res) => {
-
+    
     const { content, questionId } = req.body
     const userId = req.user.id
-
+    
     if (!content || !questionId) {
         return res.status(400).json({ error: 'Content and questionId are required' })
     }
-
+    
     try {
         const newReply = {
             content,
@@ -63,4 +62,4 @@ router.post('/', authenticate, async (req, res) => {
     }
 })
 
-export default router
+module.exports = router;

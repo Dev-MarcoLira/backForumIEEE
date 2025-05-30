@@ -1,8 +1,7 @@
-import express from 'express'
-import * as Question from '../models/Question.js'
-import { authenticate } from '../middleware/auth.js'
+const Question = require('../models/Question.js')
+const { authenticate } = require('../middleware/auth.js')
 
-const router = express.Router()
+const router = require('express').Router();
 
 router.get('/', (req, res) => {
     try{
@@ -17,7 +16,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params
     try {
         const question = await Question.findById(id)
-
+        
         if (!question) 
             return res.status(404).json({ error: 'Question not found' })
         
@@ -25,18 +24,18 @@ router.get('/:id', async (req, res) => {
     }catch (error) {
         return res.status(500).json({ error: 'Error fetching question' })
     }
-
+    
 })
 
 router.post('/', authenticate, async (req, res) => {
-
+    
     const { title, content, userId, categoryId } = req.body
     // const userId = req.user.id
-
+    
     if (!title || !content || !userId || !categoryId) {
         return res.status(400).json({ error: 'Title and content are required' })
     }
-
+    
     try {
         const newQuestion = {
             title,
@@ -52,4 +51,4 @@ router.post('/', authenticate, async (req, res) => {
     }
 })
 
-export default router
+module.exports = router;

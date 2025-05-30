@@ -1,8 +1,7 @@
-import express from 'express'
-import * as Category from '../models/Category.js'
-import { authenticate } from '../middleware/auth.js'
+const Category = require('../models/Category.js')
+const { authenticate } = require('../middleware/auth.js');
+const router = require('express').Router();
 
-const router = express.Router()
 
 router.get('/', async (req, res) => {
     try {
@@ -17,7 +16,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params
     try {
         const category = await Category.findById(id)
-
+        
         if (!category) 
             return res.status(404).json({ error: 'Category not found' })
         
@@ -29,11 +28,11 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', authenticate, async (req, res) => {
     const { name } = req.body
-
+    
     if (!name) {
         return res.status(400).json({ error: 'Name is required' })
     }
-
+    
     try {
         const newCategory = {
             description: name,
@@ -46,4 +45,4 @@ router.post('/', authenticate, async (req, res) => {
     }
 })
 
-export default router
+module.exports = router;

@@ -1,6 +1,4 @@
-import express from 'express';
-
-const router = express.Router();
+const router = require('express').Router();
 
 /* 
 hello world route
@@ -10,5 +8,4 @@ router.get('/', (req, res) => {
     res.json({ message: 'API is working' });
 });
 
-
-export default router;
+module.exports = router;

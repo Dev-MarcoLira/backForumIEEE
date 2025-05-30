@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken'
+const jwt = require('jsonwebtoken')
 
-export const authenticate = (req, res, next) => {
+const authenticate = (req, res, next) => {
 
     const authHeader = req.headers.authorization
     const token = authHeader && authHeader.split(' ')[1]
@@ -17,9 +17,14 @@ export const authenticate = (req, res, next) => {
     }
 }
 
-export const requireRole = role => (req, res, next) => {
+const requireRole = role => (req, res, next) => {
     if (req.user.role !== role) {
         return res.status(403).json({ message: 'Forbidden' })
     }
     next()
+}
+
+module.exports = {
+    authenticate,
+    requireRole
 }

@@ -1,28 +1,28 @@
-import db from '../db/knex.js'
+const db = require('../db/knex.js')
 
-export const createReply = reply =>
+const createReply = reply =>
     db('replies')
         .insert(reply)
         .then(rows => rows[0])
 
-export const deleteReply = id =>
+const deleteReply = id =>
     db('replies')
         .where({ id })
         .del()
         .then(count => count > 0)
 
-export const updateReply = (id, reply) =>
+const updateReply = (id, reply) =>
     db('replies')
         .where({ id })
         .update(reply)
         .then(count => count > 0)
 
-export const findById = id =>
+const findById = id =>
     db('replies')
         .where({ id })
         .first()
 
-export const findByQuestionId = questionId =>
+const findByQuestionId = questionId =>
     db('replies')
         .where({ question_id: questionId })
         .select('id', 'content', 'user_id', 'created_at', 'updated_at')
@@ -34,7 +34,7 @@ export const findByQuestionId = questionId =>
             updatedAt: row.updated_at
         })))
 
-export const findAll = () =>
+const findAll = () =>
     db('categories')
         .select('id', 'content', 'question_id', 'user_id', 'created_at', 'updated_at')
         .then(rows => rows.map(row => ({
@@ -46,3 +46,12 @@ export const findAll = () =>
             createdAt: row.created_at,
             updatedAt: row.updated_at
         })))
+
+module.exports = {
+    createReply,
+    deleteReply,
+    updateReply,
+    findById,
+    findByQuestionId,
+    findAll
+}

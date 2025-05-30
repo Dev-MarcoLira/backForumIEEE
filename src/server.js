@@ -1,16 +1,15 @@
-import { config } from "dotenv";
-config()
+require("dotenv").config();
 
-import express from "express";
-import cors from "cors";
+const express = require("express")
+const cors = require("cors")
 
-import defaultRoutes from "./routes/default.js";
-import adminRoutes from "./routes/admin.js";
-import accountRoutes from "./routes/account.js";
-import questionRoutes from "./routes/questions.js";
-import repliesRoutes from "./routes/replies.js";
-import authRoutes from "./routes/auth.js";
-import categoriesRoutes from "./routes/categories.js";
+const defaultRoutes = require("./routes/default.js")
+const adminRoutes = require("./routes/admin.js")
+const accountRoutes = require("./routes/account.js")
+const questionRoutes = require("./routes/questions.js")
+const repliesRoutes = require("./routes/replies.js")
+const authRoutes = require("./routes/auth.js")
+const categoriesRoutes = require("./routes/categories.js")
 
 const PORT = process.env.PORT || 3000;
 
