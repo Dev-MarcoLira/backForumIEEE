@@ -30,10 +30,10 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', authenticate, async (req, res) => {
 
-    const { title, content, userId } = req.body
+    const { title, content, userId, categoryId } = req.body
     // const userId = req.user.id
 
-    if (!title || !content) {
+    if (!title || !content || !userId || !categoryId) {
         return res.status(400).json({ error: 'Title and content are required' })
     }
 
@@ -41,7 +41,8 @@ router.post('/', authenticate, async (req, res) => {
         const newQuestion = {
             title,
             content,
-            "user_id": userId
+            "user_id": userId,
+            "category_id": categoryId,
         }
         
         await Question.createQuestion(newQuestion)
