@@ -58,7 +58,7 @@ router.post('/', authenticate, async (req, res) => {
         await Reply.createReply(newReply)
         res.status(201).json(newReply)
     } catch (error) {
-        res.status(500).json({ error: 'Error creating reply' })
+        res.status(500).json({ error: error.message || 'Error creating reply' })
     }
 })
 

@@ -47,7 +47,7 @@ router.post('/', authenticate, async (req, res) => {
         await Question.createQuestion(newQuestion)
         res.status(201).json(newQuestion)
     } catch (error) {
-        res.status(500).json({ error: 'Error creating question' })
+        res.status(500).json({ error: error.message || 'Error creating question' })
     }
 })
 

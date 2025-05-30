@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
         const categories = await Category.findAll()
         res.json({ categories })
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching categories' })
+        res.status(500).json({ error: error.message || 'Error fetching categories' })
     }
 })
 
@@ -18,11 +18,11 @@ router.get('/:id', async (req, res) => {
         const category = await Category.findById(id)
         
         if (!category) 
-            return res.status(404).json({ error: 'Category not found' })
+            return res.status(404).json({ error: error.message || 'Category not found' })
         
         res.json({ category })
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching category' })
+        res.status(500).json({ error: error.message || 'Error fetching category' })
     }
 })
 
