@@ -78,4 +78,27 @@ router.delete('/:id', authenticate, async (req, res) => {
     }
 })
 
+router.put('/:id', authenticate, async (req, res) => {
+    const { id } = req.params
+    const { content } = req.body
+    
+    if (!content) {
+        return res.status(400).json({ error: 'Content is required' })
+    }
+    
+    try {
+        const updatedReply = {
+            content
+        }
+        const updated = await Reply.updateReply(id, updatedReply)
+        
+        if (!updated) 
+            return res.status(404).json({ error: 'Reply not found' })
+        
+        res.json({ updatedReply })
+    } catch (error) {
+        res.status(500).json({ error: error.message || 'Error updating reply' })
+    }
+})
+
 module.exports = router;
