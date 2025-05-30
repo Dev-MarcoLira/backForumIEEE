@@ -45,4 +45,19 @@ router.post('/', authenticate, async (req, res) => {
     }
 })
 
+router.delete('/:id', authenticate, async (req, res) => {
+    const { id } = req.params
+    
+    try {
+        const deleted = await Category.deleteCategory(id)
+        
+        if (!deleted) 
+            return res.status(404).json({ error: 'Category not found' })
+        
+        res.json({ message: 'Category deleted successfully' })
+    } catch (error) {
+        res.status(500).json({ error: error.message || 'Error deleting category' })
+    }
+})
+
 module.exports = router;

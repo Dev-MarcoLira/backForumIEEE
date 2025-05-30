@@ -10,9 +10,9 @@ const createCategory = category =>
         .insert(category)
         .then(rows => rows[0])
 
-const deleteCategory = name =>
+const deleteCategory = id =>
     db('categories')
-        .where({ description: name })
+        .where({ id })
         .del()
         .then(count => count > 0)
 
