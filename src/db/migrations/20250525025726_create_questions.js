@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function(knex) {
+const up = function(knex) {
   
     return knex.schema.createTable("questions", (table) => {
         table.uuid("id").primary().defaultTo(knex.fn.uuid());
@@ -21,6 +21,8 @@ export const up = function(knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function(knex) {
+const down = function(knex) {
     return knex.schema.dropTable("questions");
 };
+
+module.exports = { up, down };
