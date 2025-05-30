@@ -30,16 +30,23 @@ const findByCategoryName = categoryName =>
         .then(rows => rows)
 
 const findAll = () =>
-    db('questions')
-        .join('categories', 'questions.category_id', 'categories.id')
-        .select('id', 'title', 'category_id', 'content', 'created_at', 'updated_at',
-             'categories.description as category_description')
+    db('questions as q')
+        .innerJoin('categories as c', 'q.category_id', 'c.id')
+        .select(
+            'q.id', 
+            'q.title', 
+            'q.category_id',
+            'c.description as category_description', 
+            'q.content', 
+            'q.created_at', 
+            'q.updated_at'
+        )
         .then(rows => rows.map(row => ({
             id: row.id,
             title: row.title,
-            content: row.content,
             categoryId: row.category_id,
-            categoryDescription: row.category_description,
+            category: row.category_description,
+            content: row.content,
             createdAt: row.created_at,
             updatedAt: row.updated_at
         })))
