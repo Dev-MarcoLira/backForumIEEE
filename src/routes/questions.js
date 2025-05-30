@@ -3,9 +3,9 @@ const { authenticate } = require('../middleware/auth.js')
 
 const router = require('express').Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     try{
-        const questions = Question.findAll()
+        const questions = await Question.findAll()
         res.json({ questions })
     }catch (error) {
         return res.status(500).json({ error: 'Error fetching questions' })
