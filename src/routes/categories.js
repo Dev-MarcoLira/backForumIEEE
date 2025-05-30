@@ -60,4 +60,28 @@ router.delete('/:id', authenticate, async (req, res) => {
     }
 })
 
-module.exports = router;
+router.put('/:id', authenticate, async (req, res) => {
+    const { id } = req.params
+    const { name } = req.body
+    
+    if (!name) {
+        return res.status(400).json({ error: 'Name is required' })
+    }
+    
+    try {
+        const updatedCategory = {
+            description: name,
+        }
+        
+        const updated = await Category.updateCategory(id, updatedCategory)
+        
+        if (!updated) 
+            return res.status(404).json({ error: 'Category not found' })
+        
+        res.json({ updatedCategory })
+    } catch (error) {
+        res.status(500).json({ error: error.message || 'Error updating category' })
+    }
+})
+
+module.exports = router

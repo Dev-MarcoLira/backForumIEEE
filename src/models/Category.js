@@ -16,9 +16,9 @@ const deleteCategory = id =>
         .del()
         .then(count => count > 0)
 
-const updateCategory = (name, category) =>
+const updateCategory = (id, category) =>
     db('categories')
-        .where({ description: name })
+        .where({ id })
         .update(category)
         .then(count => count > 0)
 
