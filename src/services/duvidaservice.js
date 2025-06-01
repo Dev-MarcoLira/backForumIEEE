@@ -1,15 +1,15 @@
 require('dotenv').config();
-const { v4 } = requrie('../utilitario/uuid'); 
-const database = require("../database/exports"); // Ajuste o caminho se necess�rio
+const { v4 } = require('../utilitario/uuid'); 
+const database = require("../database/exports"); // Ajuste o caminho se necessário
 
 async function readDuvidas(filtros = {}) {
-    // Define valores padr�o para pagina��o, ordena��o e extrai outros filtros.
+    // Define valores padráo para paginação, ordenação e extrai outros filtros.
     const {
         page = 1,
         limit = 10,
         sortBy = 'criado_em',
         order = 'DESC',
-        // Filtros espec�ficos que podem ser passados em req.query
+        // Filtros específicos que podem ser passados em req.query
         categoria_id,
         usuario_id,
         resolvida,
@@ -20,13 +20,13 @@ async function readDuvidas(filtros = {}) {
     const limitInt = parseInt(limit, 10) || 10;
     const offset = (pageInt - 1) * limitInt;
 
-    // Constr�i a query principal para buscar as d�vidas.
+    // Constrói a query principal para buscar as dúvidas.
     const queryBuilder = database('duvidas')
         .select(
             'duvidas.id',
             'duvidas.descricao',
             'duvidas.criado_em',
-            'duvidas.modificado_em', // Adicionado para consist�ncia
+            'duvidas.modificado_em', // Adicionado para consistência
             'duvidas.resolvida',
             'usuarios.nome as autorNome', // Seleciona o nome do autor da tabela 'usuarios'.
             'categorias.tipo as nome_categoria' // Adiciona o nome da categoria
@@ -35,12 +35,12 @@ async function readDuvidas(filtros = {}) {
         .leftJoin('categorias', 'duvidas.categoria_id', 'categorias.id') // Left join para categorias (categoria_id pode ser null).
         .select(database.raw('(SELECT COUNT(*) FROM curtir_duvidas WHERE curtir_duvidas.duvida_id = duvidas.id) as contagemdecurtidas'));
 
-    // Constr�i a query para contagem. Deve espelhar os JOINS e WHEREs da queryBuilder.
+    // Constrói a query para contagem. Deve espelhar os JOINS e WHEREs da queryBuilder.
     const countQueryBuilder = database('duvidas')
         .join('usuarios', 'duvidas.usuario_id', 'usuarios.id')
         .leftJoin('categorias', 'duvidas.categoria_id', 'categorias.id');
 
-    // **IN�CIO DA CORRE��O: Aplicar filtros em AMBAS as queries (queryBuilder e countQueryBuilder)**
+    // **INÍCIO DA CORREÇÃO: Aplicar filtros em AMBAS as queries (queryBuilder e countQueryBuilder)**
     if (categoria_id) {
         queryBuilder.where('duvidas.categoria_id', categoria_id);
         countQueryBuilder.where('duvidas.categoria_id', categoria_id);
@@ -62,11 +62,11 @@ async function readDuvidas(filtros = {}) {
         // .orWhere('usuarios.nome', 'like', buscaLike)
         // .orWhere('categorias.tipo', 'like', buscaLike)
         countQueryBuilder.where('duvidas.descricao', 'like', buscaLike);
-        // E os mesmos orWhere se aplic�vel para a contagem
+        // E os mesmos orWhere se aplicável para a contagem
     }
-    // **FIM DA CORRE��O**
+    // **FIM DA CORREÇÃO**
 
-    // Adiciona a l�gica de ordena��o � query principal.
+    // Adiciona a lógica de ordenação é query principal.
     const orderUpper = order.toUpperCase();
     if (sortBy === 'curtidas') {
         queryBuilder.orderBy('contagemdecurtidas', orderUpper);
@@ -76,14 +76,14 @@ async function readDuvidas(filtros = {}) {
     } else if (sortBy === 'nome_categoria') {
         queryBuilder.orderBy('nome_categoria', orderUpper); // Ordena pelo alias
     } else if (['id', 'descricao', 'criado_em', 'modificado_em', 'resolvida'].includes(sortBy)) {
-        // Ordena por colunas v�lidas da tabela 'duvidas'.
+        // Ordena por colunas válidas da tabela 'duvidas'.
         queryBuilder.orderBy(`duvidas.${sortBy}`, orderUpper);
     } else {
-        // Fallback para ordena��o padr�o.
+        // Fallback para ordenação padrão.
         queryBuilder.orderBy('duvidas.criado_em', 'DESC');
     }
 
-    // Aplica limite e offset para pagina��o � query principal.
+    // Aplica limite e offset para paginação é query principal.
     queryBuilder.limit(limitInt).offset(offset);
 
     // Executa as queries.
@@ -91,7 +91,7 @@ async function readDuvidas(filtros = {}) {
     const totalResult = await countQueryBuilder.count({ count: "*" }).first();
     const totalItems = parseInt(totalResult.count, 10);
 
-    // Retorna os dados das d�vidas e as informa��es de pagina��o.
+    // Retorna os dados das dúvidas e as informaçães de paginação.
     return {
         data: duvidas,
         pagination: {
@@ -107,14 +107,14 @@ async function readDuvidas(filtros = {}) {
 
 async function createDuvida(descricao, usuario_id, categoria_id) {
     if (!descricao || !usuario_id) {
-        throw new Error("Descri��o e ID do usu�rio s�o obrigat�rios.");
+        throw new Error("Descrição e ID do usuário são obrigatórios.");
     }
 
     // Opcional: Verificar se categoria_id (se fornecido) existe
     if (categoria_id) {
         const categoriaExiste = await database("categorias").where({ id: categoria_id }).first();
         if (!categoriaExiste) {
-            throw new Error("Categoria n�o encontrada.");
+            throw new Error("Categoria não encontrada.");
         }
     }
 
@@ -123,13 +123,13 @@ async function createDuvida(descricao, usuario_id, categoria_id) {
         descricao,
         usuario_id,
         categoria_id: categoria_id || null, // Permite que a categoria seja opcional
-        resolvida: false, // D�vida n�o resolvida por padr�o
-        // criado_em e modificado_em s�o definidos pelo banco com defaultTo(knex.fn.now())
+        resolvida: false, // Dúvida não resolvida por padrão
+        // criado_em e modificado_em são definidos pelo banco com defaultTo(knex.fn.now())
     };
 
     await database("duvidas").insert(novaDuvida);
-    // � uma boa pr�tica retornar o objeto criado ou um objeto com mensagem e o ID/objeto.
-    return { message: "D�vida criada com sucesso", duvida: novaDuvida };
+    // É uma boa prática retornar o objeto criado ou um objeto com mensagem e o ID/objeto.
+    return { message: "Dúvida criada com sucesso", duvida: novaDuvida };
 }
 
 async function readDuvidaById(id, opcoesRespostas = {}) {
@@ -146,12 +146,12 @@ async function readDuvidaById(id, opcoesRespostas = {}) {
         .first();
 
     if (!duvida) {
-        throw new Error("D�vida n�o encontrada.");
+        throw new Error("Dúvida não encontrada.");
     }
 
     const {
-        sortByRespostas = 'criado_em', // Campo padr�o para ordena��o das respostas
-        orderRespostas = 'ASC',       // Ordem padr�o para as respostas
+        sortByRespostas = 'criado_em', // Campo padrão para ordenação das respostas
+        orderRespostas = 'ASC',       // Ordem padrão para as respostas
     } = opcoesRespostas;
 
     const queryRespostas = database("respostas")
@@ -163,19 +163,19 @@ async function readDuvidaById(id, opcoesRespostas = {}) {
         .leftJoin("usuarios", "respostas.usuario_id", "usuarios.id") // leftJoin se usuario_id em respostas puder ser null
         .where("respostas.duvida_id", id);
 
-    // Ordena��o das respostas
+    // Ordenação das respostas
     const orderRespostasUpper = orderRespostas.toUpperCase();
     if (sortByRespostas === 'curtidas') {
         queryRespostas.orderBy('contagem_curtidas_resposta', orderRespostasUpper);
         queryRespostas.orderBy('respostas.criado_em', 'ASC'); // Desempate
-    } else if (['id', 'conteudo', 'criado_em'].includes(sortByRespostas)) { // Adicione campos v�lidos de 'respostas'
+    } else if (['id', 'conteudo', 'criado_em'].includes(sortByRespostas)) { // Adicione campos válidos de 'respostas'
         queryRespostas.orderBy(`respostas.${sortByRespostas}`, orderRespostasUpper);
     } else {
-        queryRespostas.orderBy('respostas.criado_em', 'ASC'); // Fallback para ordena��o de respostas
+        queryRespostas.orderBy('respostas.criado_em', 'ASC'); // Fallback para ordenação de respostas
     }
 
     const respostas = await queryRespostas;
-    duvida.respostas = respostas; // Anexa as respostas ao objeto da d�vida
+    duvida.respostas = respostas; // Anexa as respostas ao objeto da dúvida
 
     return duvida;
 }
@@ -184,11 +184,11 @@ async function updateDuvida(id, usuarioAutenticadoId, dadosUpdate) {
     const duvidaExistente = await database("duvidas").where({ id }).first();
 
     if (!duvidaExistente) {
-        throw new Error("D�vida n�o encontrada.");
+        throw new Error("Dúvida não encontrada.");
     }
 
     if (duvidaExistente.usuario_id !== usuarioAutenticadoId) {
-        throw new Error("Usu�rio n�o autorizado a editar esta d�vida.");
+        throw new Error("Usuário não autorizado a editar esta dúvida.");
     }
 
     const camposPermitidos = ['descricao', 'categoria_id', 'resolvida'];
@@ -196,11 +196,11 @@ async function updateDuvida(id, usuarioAutenticadoId, dadosUpdate) {
     let algumaAtualizacaoValida = false;
 
     for (const campo of camposPermitidos) {
-        if (dadosUpdate.hasOwnProperty(campo)) { // Verifica se o campo est� presente nos dados para update
-            if (campo === 'categoria_id' && dadosUpdate[campo] != null) { // Se for categoria_id e n�o for explicitamente null
+        if (dadosUpdate.hasOwnProperty(campo)) { // Verifica se o campo está presente nos dados para update
+            if (campo === 'categoria_id' && dadosUpdate[campo] != null) { // Se for categoria_id e não for explicitamente null
                 const categoriaExiste = await database("categorias").where({ id: dadosUpdate[campo] }).first();
                 if (!categoriaExiste) {
-                    throw new Error("Categoria fornecida para atualiza��o n�o encontrada.");
+                    throw new Error("Categoria fornecida para atualização não encontrada.");
                 }
             }
             atualizacoesValidas[campo] = dadosUpdate[campo]; // Aceita null para categoria_id se enviado
@@ -209,31 +209,31 @@ async function updateDuvida(id, usuarioAutenticadoId, dadosUpdate) {
     }
 
     if (!algumaAtualizacaoValida) {
-        throw new Error("Nenhum dado v�lido fornecido para atualiza��o.");
+        throw new Error("Nenhum dado válido fornecido para atualização.");
     }
 
     atualizacoesValidas.modificado_em = database.fn.now();
 
     await database("duvidas").where({ id }).update(atualizacoesValidas);
 
-    return { message: "D�vida atualizada com sucesso." };
+    return { message: "Dúvida atualizada com sucesso." };
 }
 
 async function deleteDuvida(id, usuarioAutenticadoId) {
     const duvidaExistente = await database("duvidas").where({ id }).first();
 
     if (!duvidaExistente) {
-        throw new Error("D�vida n�o encontrada.");
+        throw new Error("Dúvida não encontrada.");
     }
 
     if (duvidaExistente.usuario_id !== usuarioAutenticadoId) {
-        throw new Error("Usu�rio n�o autorizado a deletar esta d�vida.");
+        throw new Error("Usuário não autorizado a deletar esta dúvida.");
     }
 
    
     await database("duvidas").where({ id }).del(); 
 
-    return { message: "D�vida deletada com sucesso." };
+    return { message: "Dúvida deletada com sucesso." };
 }
 
 module.exports = {
@@ -244,7 +244,7 @@ module.exports = {
     deleteDuvida,
 };
 
-//OBRIGADO GEMINI, DIMINIU GRANDEMENTE O PROCESSO DE ESCREVER O C�DIGO
-//IMAGINA FAZER 175 LINHAS NA M�O
+//OBRIGADO GEMINI, DIMINIU GRANDEMENTE O PROCESSO DE ESCREVER O CÓDIGO
+
 
 

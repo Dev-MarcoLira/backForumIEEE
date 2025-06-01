@@ -23,7 +23,7 @@ async function createUser(nome, email, senha) { // Mantido: createUser
     };
     await database("usuarios").insert(novoUsuario);
     const { senha: _, ...usuarioCriado } = novoUsuario;
-    return { message: "Usu�rio criado com sucesso.", usuario: usuarioCriado };
+    return { message: "Usuário criado com sucesso.", usuario: usuarioCriado };
 }
 
 async function login(email, senha) { // Mantido: login
@@ -46,27 +46,27 @@ async function login(email, senha) { // Mantido: login
     return { token, usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email } };
 }
 
-// readUser agora busca um perfil p�blico por ID
-async function readUser(idUsuario) { // Mantido: readUser (para perfil p�blico)
+// readUser agora busca um perfil público por ID
+async function readUser(idUsuario) { // Mantido: readUser (para perfil público)
     if (!idUsuario) {
-        throw new Error("ID do usu�rio � obrigat�rio para buscar o perfil.");
+        throw new Error("ID do usuário é obrigatório para buscar o perfil.");
     }
     const usuario = await database("usuarios")
-        .select("id", "nome", "criado_em" /* Adicione outros campos p�blicos aqui, ex: biografia, foto_perfil */)
+        .select("id", "nome", "criado_em" /* Adicione outros campos públicos aqui, ex: biografia, foto_perfil */)
         .where({ id: idUsuario })
         .first();
     if (!usuario) {
-        throw new Error("Usu�rio n�o encontrado.");
+        throw new Error("Usuúrio ã encontrado.");
     }
-    // Aqui voc� pode adicionar l�gica para buscar estat�sticas p�blicas do usu�rio,
-    // como n�mero de d�vidas criadas, se desejar.
+    // Aqui você pode adicionar lógica para buscar estatísticas públicas do usuário,
+    // como número de dúvidas criadas, se desejar.
     return usuario;
 }
 
-async function updateUser(idUsuarioAutenticado, dadosUpdate) { // Mantido: updateUser (para o pr�prio perfil)
+async function updateUser(idUsuarioAutenticado, dadosUpdate) { // Mantido: updateUser (para o próprio perfil)
     const usuarioExistente = await database("usuarios").where({ id: idUsuarioAutenticado }).first();
     if (!usuarioExistente) {
-        throw new Error("Usu�rio n�o encontrado para atualiza��o (token inv�lido ou usu�rio deletado).");
+        throw new Error("Usuário não encontrado para atualização (token inválido ou usuário deletado).");
     }
 
     const atualizacoes = {};
@@ -79,7 +79,7 @@ async function updateUser(idUsuarioAutenticado, dadosUpdate) { // Mantido: updat
     if (dadosUpdate.hasOwnProperty('email') && dadosUpdate.email && dadosUpdate.email !== usuarioExistente.email) {
         const emailExistenteOutroUsuario = await database("usuarios").where({ email: dadosUpdate.email }).whereNot({ id: idUsuarioAutenticado }).first();
         if (emailExistenteOutroUsuario) {
-            throw new Error("Este email j� est� em uso por outro usu�rio.");
+            throw new Error("Este email já está em uso por outro usuário.");
         }
         atualizacoes.email = dadosUpdate.email;
         algumaAtualizacaoValida = true;
@@ -91,7 +91,7 @@ async function updateUser(idUsuarioAutenticado, dadosUpdate) { // Mantido: updat
     }
 
     if (!algumaAtualizacaoValida) {
-        throw new Error("Nenhum dado v�lido fornecido para atualiza��o ou os dados s�o iguais aos existentes.");
+        throw new Error("Nenhum dado válido fornecido para atualização ou os dados são iguais aos existentes.");
     }
     atualizacoes.modificado_em = database.fn.now();
     await database("usuarios").where({ id: idUsuarioAutenticado }).update(atualizacoes);
@@ -100,23 +100,23 @@ async function updateUser(idUsuarioAutenticado, dadosUpdate) { // Mantido: updat
     return { message: "Perfil atualizado com sucesso.", usuario: usuarioAtualizado };
 }
 
-async function deleteUser(idUsuarioAutenticado) { // Mantido: deleteUser (para a pr�pria conta)
+async function deleteUser(idUsuarioAutenticado) { // Mantido: deleteUser (para a própria conta)
     const usuarioExistente = await database("usuarios").where({ id: idUsuarioAutenticado }).first();
     if (!usuarioExistente) {
-        throw new Error("Usu�rio n�o encontrado para dele��o (token inv�lido ou usu�rio deletado).");
+        throw new Error("Usuário não encontrado para deleção (token inválido ou usuário deletado).");
     }
     await database("usuarios").where({ id: idUsuarioAutenticado }).del();
-    return { message: "Conta de usu�rio deletada com sucesso." };
+    return { message: "Conta de usuário deletada com sucesso." };
 }
 
-// Fun��o para obter dados da pr�pria conta (mais completa que o perfil p�blico)
+// Função para obter dados da própria conta (mais completa que o perfil público)
 async function obterDadosPropriaConta(idUsuarioAutenticado) {
     const usuario = await database("usuarios")
-        .select("id", "nome", "email", "criado_em", "modificado_em") // Todos os campos relevantes para o usu�rio sobre si mesmo
+        .select("id", "nome", "email", "criado_em", "modificado_em") // Todos os campos relevantes para o usuário sobre si mesmo
         .where({ id: idUsuarioAutenticado })
         .first();
     if (!usuario) {
-        throw new Error("Usu�rio n�o encontrado (token inv�lido ou usu�rio deletado).");
+        throw new Error("Usuário não encontrado (token inválido ou usuário deletado).");
     }
     return usuario;
 }
@@ -125,8 +125,8 @@ async function obterDadosPropriaConta(idUsuarioAutenticado) {
 module.exports = {
     login,
     createUser,
-    readUser, // Para ler perfil p�blico de um usu�rio por ID
-    updateUser, // Para o usu�rio logado atualizar o pr�prio perfil
-    deleteUser, // Para o usu�rio logado deletar a pr�pria conta
-    obterDadosPropriaConta, // Para o usu�rio logado ver seus pr�prios dados de conta
+    readUser, // Para ler perfil público de um usuário por ID
+    updateUser, // Para o usuário logado atualizar o próprio perfil
+    deleteUser, // Para o usuário logado deletar a própria conta
+    obterDadosPropriaConta, // Para o usuário logado ver seus práprios dados de conta
 };

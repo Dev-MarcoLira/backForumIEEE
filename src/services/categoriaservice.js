@@ -1,20 +1,22 @@
 require('dotenv').config();
 const database = require("../database/exports"); 
 const crypto = require("crypto");
+const v4 = require('../utilitario/uuid');
+
 
 async function createCategoria(tipo) {
     if (!tipo || typeof tipo !== 'string' || tipo.trim() === '') {
-        throw new Error("O nome (tipo) da categoria È obrigatÛrio e deve ser um texto.");
+        throw new Error("O nome (tipo) da categoria √© obrigat√≥rio e deve ser um texto.");
     }
 
     const tipoFormatado = tipo.trim();
     const categoriaExistente = await database("categorias").where({ tipo: tipoFormatado }).first();
     if (categoriaExistente) {
-        throw new Error(`A categoria "${tipoFormatado}" j· existe.`);
+        throw new Error(`A categoria "${tipoFormatado}" j√° existe.`);
     }
 
     const novaCategoria = {
-        id: crypto.randomUUID(),
+        id: crypto.v4(),
         tipo: tipoFormatado,
     };
 
@@ -24,31 +26,31 @@ async function createCategoria(tipo) {
 
 async function readAllCategorias() {
     const categorias = await database("categorias").select("id", "tipo", "criado_em", "modificado_em").orderBy("tipo", "asc");
-    return categorias; // Retorna array vazio se n„o houver categorias
+    return categorias; // Retorna array vazio se n√£o houver categorias
 }
 
 async function readCategoriaById(id) {
     if (!id) {
-        throw new Error("O ID da categoria È obrigatÛrio.");
+        throw new Error("O ID da categoria √© obrigat√≥rio.");
     }
     const categoria = await database("categorias").select("id", "tipo", "criado_em", "modificado_em").where({ id }).first();
     if (!categoria) {
-        throw new Error("Categoria n„o encontrada.");
+        throw new Error("Categoria n√£o encontrada.");
     }
     return categoria;
 }
 
 async function updateCategoria(id, tipo) {
     if (!id) {
-        throw new Error("O ID da categoria È obrigatÛrio para atualizaÁ„o.");
+        throw new Error("O ID da categoria √© obrigat√≥rio para atualiza√ß√£o.");
     }
     if (!tipo || typeof tipo !== 'string' || tipo.trim() === '') {
-        throw new Error("O novo nome (tipo) da categoria È obrigatÛrio.");
+        throw new Error("O novo nome (tipo) da categoria √© obrigat√≥rio.");
     }
 
     const categoriaExistente = await database("categorias").where({ id }).first();
     if (!categoriaExistente) {
-        throw new Error("Categoria n„o encontrada para atualizaÁ„o.");
+        throw new Error("Categoria n√£o encontrada para atualiza√ß√£o.");
     }
 
     const tipoFormatado = tipo.trim();
@@ -58,12 +60,12 @@ async function updateCategoria(id, tipo) {
             .whereNot({ id })
             .first();
         if (outraCategoriaComMesmoTipo) {
-            throw new Error(`J· existe outra categoria com o nome "${tipoFormatado}".`);
+            throw new Error(`J√° existe outra categoria com o nome "${tipoFormatado}".`);
         }
     } else {
-        // Se o tipo n„o mudou, n„o h· necessidade de atualizar, a menos que vocÍ tenha outros campos.
-        // Poderia retornar uma mensagem informando que n„o houve alteraÁ„o.
-        // Por ora, permitiremos a "atualizaÁ„o" para o mesmo nome, que apenas atualizar· o modificado_em.
+        // Se o tipo n√£o mudou, n√£o h√° necessidade de atualizar, a menos que voc√™ tenha outros campos.
+        // Poderia retornar uma mensagem informando que n√£o houve altera√ß√£o.
+        // Por ora, permitiremos a "atualiza√ß√£o" para o mesmo nome, que apenas atualizar√° o modificado_em.
     }
     
 
@@ -81,19 +83,19 @@ async function updateCategoria(id, tipo) {
 
 async function deleteCategoria(id) {
     if (!id) {
-        throw new Error("O ID da categoria È obrigatÛrio para deleÁ„o.");
+        throw new Error("O ID da categoria √© obrigat√≥rio para dele√ß√£o.");
     }
     const categoriaExistente = await database("categorias").where({ id }).first();
     if (!categoriaExistente) {
-        throw new Error("Categoria n„o encontrada para deleÁ„o.");
+        throw new Error("Categoria n√£o encontrada para dele√ß√£o.");
     }
 
-    // Verificar se a categoria est· sendo usada em alguma d˙vida
-    // Isso È importante porque a coluna 'categoria_id' em 'duvidas' È NOT NULLABLE
-    // e a regra onDelete('SET NULL') da migration de d˙vidas entraria em conflito.
+    // Verificar se a categoria est√° sendo usada em alguma d√∫vida
+    // Isso √© importante porque a coluna 'categoria_id' em 'duvidas' √© NOT NULLABLE
+    // e a regra onDelete('SET NULL') da migration de d√∫vidas entraria em conflito.
     const duvidasComEstaCategoria = await database("duvidas").where({ categoria_id: id }).first();
     if (duvidasComEstaCategoria) {
-        throw new Error("Esta categoria n„o pode ser deletada pois est· associada a uma ou mais d˙vidas.");
+        throw new Error("Esta categoria n√£o pode ser deletada pois est√° associada a uma ou mais d√∫vidas.");
     }
 
     await database("categorias").where({ id }).del();

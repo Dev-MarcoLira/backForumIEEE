@@ -8,15 +8,15 @@ exports.up = function(knex) {
 
     table.uuid('usuario_id').nullable()
       .references('id').inTable('usuarios')
-      .onDelete('SET NULL'); // mantém a resposta mesmo se o usuário for deletado
+      .onDelete('SET NULL'); // mantÃªm a resposta mesmo se o usuÃ¡rio for deletado
 
     table.uuid('duvida_id').notNullable()
       .references('id').inTable('duvidas')
-      .onDelete('CASCADE'); // se a dúvida for deletada, apaga as respostas
+      .onDelete('CASCADE'); // se a dÃºvida for deletada, apaga as respostas
 
     table.text('descricao').notNullable(); // corpo da resposta
 
-    table.timestamp('criado_em').defaultTo(knex.fn.now()); // registro automático
+    table.timestamp('criado_em').defaultTo(knex.fn.now()); // registro automÃ¢tico
     
     table.timestamp('modificado_em').defaultTo(knex.fn.now()); // idem
   });

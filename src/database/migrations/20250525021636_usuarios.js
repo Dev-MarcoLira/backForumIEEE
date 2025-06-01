@@ -4,7 +4,7 @@
  */
 exports.up = function (knex) {
   return knex.schema.createTable('usuarios', (table) => {
-    table.uuid('id').primary(); // UUID como chave prim·ria
+    table.uuid('id').primary(); // UUID como chave prim√°ria
 
     table.string('nome').notNullable();
 
@@ -12,9 +12,9 @@ exports.up = function (knex) {
 
     table.string('senha', 255).notNullable(); // varchar(255) para armazenar hash da senha
 
-    table.timestamp('criado_em').defaultTo(knex.fn.now()); // timestamp de criaÁ„o
+    table.timestamp('criado_em').defaultTo(knex.fn.now()); // timestamp de cria√ß√£o
     
-    table.timestamp('modificado_em').defaultTo(knex.fn.now()); // timestamp de modificaÁ„o
+    table.timestamp('modificado_em').defaultTo(knex.fn.now()); // timestamp de modifica√ß√£o
   });
 };
 

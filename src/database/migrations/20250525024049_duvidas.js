@@ -11,11 +11,11 @@
 
     table.uuid('usuario_id').notNullable()
       .references('id').inTable('usuarios')
-      .onDelete('CASCADE'); // exclui dúvidas se o usuário for deletado
+      .onDelete('CASCADE'); // exclui dÃºvidas se o usuÃ¡rio for deletado
 
     table.uuid('categoria_id').nullable()
       .references('id').inTable('categorias')
-      .onDelete('SET NULL'); // mantém a dúvida se a categoria for deletada
+      .onDelete('SET NULL'); // mantÃªm a dÃºvida se a categoria for deletada
 
     table.boolean('resolvida').defaultTo(false);
 

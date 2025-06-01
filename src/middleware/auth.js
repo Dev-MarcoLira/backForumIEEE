@@ -5,33 +5,33 @@ async function autentican(req, res, next) {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader) {
-            return res.status(401).json({ erro: "Token de autenticaÁ„o n„o fornecido." });
+            return res.status(401).json({ erro: "Token de autentica√ß√£o n√£o fornecido." });
         }
 
         const parts = authHeader.split(" ");
         if (parts.length !== 2 || parts[0].toLowerCase() !== 'bearer') {
-            return res.status(401).json({ erro: "Formato do token inv·lido. Use o formato 'Bearer <token>'." });
+            return res.status(401).json({ erro: "Formato do token inv√°lido. Use o formato 'Bearer <token>'." });
         }
         const token = parts[1];
 
         jwt.verify(token, process.env.JWT_SECRET, (erro, decoded) => {
             if (erro) {
                 if (erro.name === 'TokenExpiredError') {
-                    return res.status(401).json({ erro: "Token expirado. Por favor, faÁa login novamente." });
+                    return res.status(401).json({ erro: "Token expirado. Por favor, fa√ßaa login novamente." });
                 }
                 if (erro.name === 'JsonWebTokenError') {
-                    return res.status(401).json({ erro: "Token inv·lido ou malformado." });
+                    return res.status(401).json({ erro: "Token inv√°lido ou malformado." });
                 }
-                return res.status(401).json({ erro: "Falha na autenticaÁ„o do token." });
+                return res.status(401).json({ erro: "Falha na autentica√ß√£o do token." });
             } else {
-                req.id = decoded.id; // ID do usu·rio do payload do token
-                req.user = decoded; // Anexa todo o payload decodificado, pode ser ˙til
+                req.id = decoded.id; // ID do usu√°rio do payload do token
+                req.user = decoded; // Anexa todo o payload decodificado, pode ser √∫til
                 next();
             }
         });
     } catch (e) {
-        console.error("Erro inesperado no middleware de autenticaÁ„o:", e);
-        res.status(500).json({ erro: "Erro interno no servidor durante a autenticaÁ„o." });
+        console.error("Erro inesperado no middleware de autentica√ß√£o:", e);
+        res.status(500).json({ erro: "Erro interno no servidor durante a autentica√ß√£o." });
     }
 }
 module.exports = autentican

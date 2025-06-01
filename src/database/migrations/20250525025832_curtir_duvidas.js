@@ -6,13 +6,13 @@ exports.up = function(knex) {
   return knex.schema.createTable("curtir_duvidas", (table) => {
     table.uuid("usuario_id").notNullable()
       .references("id").inTable("usuarios")
-      .onDelete("CASCADE"); // se o usuário for deletado, remove o "curtir"
+      .onDelete("CASCADE"); // se o usuÃ¡rio for deletado, remove o "curtir"
 
     table.uuid("duvida_id").notNullable()
       .references("id").inTable("duvidas")
-      .onDelete("CASCADE");   // se a dúvida for deletada, remove o "curtir"
+      .onDelete("CASCADE");   // se a dÃºvida for deletada, remove o "curtir"
 
-    table.primary(["usuario_id", "duvida_id"]); // <- chave primária composta   
+    table.primary(["usuario_id", "duvida_id"]); // <- chave primÃ¡ria composta   
   
 
     table.timestamp("criado_em").defaultTo(knex.fn.now());
