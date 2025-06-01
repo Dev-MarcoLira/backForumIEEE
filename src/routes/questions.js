@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
         const questions = await Question.findAll()
         res.json({ questions })
     }catch (error) {
-        return res.status(500).json({ error: 'Error fetching questions' })
+        return res.status(500).json({ error: error.message || 'Error fetching questions' })
     }
 })
 
@@ -22,7 +22,7 @@ router.get('/:id', async (req, res) => {
         
         res.json({ question })
     }catch (error) {
-        return res.status(500).json({ error: 'Error fetching question' })
+        return res.status(500).json({ error: error.message || 'Error fetching question' })
     }
     
 })
@@ -33,7 +33,7 @@ router.post('/', authenticate, async (req, res) => {
     const userId = req.user.id
     
     if (!title || !content || !categoryId) {
-        return res.status(400).json({ error: 'Title and content are required' })
+        return res.status(400).json({ error: error.message || 'Title and content are required' })
     }
     
     try {

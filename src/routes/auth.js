@@ -26,7 +26,7 @@ router.post('/register', async (req, res) => {
             role
         })
     } catch (error) {
-        res.status(500).json({ error: 'Error creating user' })
+        res.status(500).json({ error: error.message || 'Error creating user' })
     }
 
 })
@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
         )
         res.json({ token })
     } catch (error) {
-        res.status(500).json({ error: 'Error logging in' })
+        res.status(500).json({ error: error.message || 'Error logging in' })
     }
 
 })
