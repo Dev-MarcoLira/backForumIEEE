@@ -1,6 +1,6 @@
 
 const router = require('express').Router()
-const duvidaController = require("../controller/duvidacontrolle")
+const duvidaController = require("../controller/duvidaController")
 const authMiddleware = require("../middleware/auth")
 router.post("/api/duvidas", authMiddleware, duvidaController.handleCreateDuvida)
 router.get("/api/duvidas", duvidaController.handleReadAllDuvidas)

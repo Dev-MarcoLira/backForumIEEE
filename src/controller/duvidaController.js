@@ -1,22 +1,22 @@
-const duvidaService = require("../services/duvidaservice"); // Ajuste o caminho se necessário
+const duvidaService = require("../services/duvidaService"); // Ajuste o caminho se necessï¿½rio
 
 async function handleCreateDuvida(req, res) {
     try {
         const { descricao, categoria_id } = req.body;
-        const usuario_id = req.id; // ID do usuário vindo do middleware de autenticação
+        const usuario_id = req.id; // ID do usuï¿½rio vindo do middleware de autenticaï¿½ï¿½o
 
-        // O service já trata a obrigatoriedade da descrição e usuario_id
+        // O service jï¿½ trata a obrigatoriedade da descriï¿½ï¿½o e usuario_id
         const resultado = await duvidaService.createDuvida(descricao, usuario_id, categoria_id);
-        // O service retorna "Dúvida criada com sucesso" ou um objeto. Padronizar o retorno do service seria bom.
-        // Assumindo que queremos retornar uma mensagem e talvez o ID da nova dúvida:
+        // O service retorna "Dï¿½vida criada com sucesso" ou um objeto. Padronizar o retorno do service seria bom.
+        // Assumindo que queremos retornar uma mensagem e talvez o ID da nova dï¿½vida:
         if (typeof resultado === 'string') { // Se o service retornar apenas a mensagem
             res.status(201).json({ message: resultado });
-        } else { // Se o service retornar um objeto (ex: com a nova dúvida)
+        } else { // Se o service retornar um objeto (ex: com a nova dï¿½vida)
             res.status(201).json(resultado);
         }
     } catch (e) {
-        // Tratar erros específicos do service, se necessário
-        if (e.message.includes("obrigatórios") || e.message.includes("Categoria não encontrada")) {
+        // Tratar erros especï¿½ficos do service, se necessï¿½rio
+        if (e.message.includes("obrigatï¿½rios") || e.message.includes("Categoria nï¿½o encontrada")) {
             return res.status(400).json({ erro: e.message });
         }
         console.error("Erro em handleCreateDuvida:", e);
@@ -27,21 +27,21 @@ async function handleCreateDuvida(req, res) {
 async function handleReadAllDuvidas(req, res) {
     try {
         // Passa todos os query params (req.query) como o objeto 'filtros' para o service.
-        // O service já tem valores padrão para page, limit, sortBy, order.
+        // O service jï¿½ tem valores padrï¿½o para page, limit, sortBy, order.
         // Outros query params como categoria_id, usuario_id, resolvida, termoDeBusca
-        // devem ser tratados dentro da função readDuvidas no service, inclusive na countQueryBuilder.
+        // devem ser tratados dentro da funï¿½ï¿½o readDuvidas no service, inclusive na countQueryBuilder.
         const resultadoPaginado = await duvidaService.readDuvidas(req.query);
         res.status(200).json(resultadoPaginado);
     } catch (e) {
         console.error("Erro em handleReadAllDuvidas:", e);
-        res.status(500).json({ erro: "Erro ao buscar dúvidas." });
+        res.status(500).json({ erro: "Erro ao buscar dï¿½vidas." });
     }
 }
 
 async function handleReadDuvidaById(req, res) {
     try {
         const { id } = req.params;
-        // Opções para ordenação de respostas podem vir da query string
+        // Opï¿½ï¿½es para ordenaï¿½ï¿½o de respostas podem vir da query string
         // Ex: /api/duvidas/ID_DA_DUVIDA?sortByRespostas=curtidas&orderRespostas=DESC
         const opcoesRespostas = {
             sortBy: req.query.sortByRespostas, // O service espera 'sortBy' e 'order'
@@ -50,29 +50,29 @@ async function handleReadDuvidaById(req, res) {
         const duvida = await duvidaService.readDuvidaById(id, opcoesRespostas);
         res.status(200).json(duvida);
     } catch (e) {
-        if (e.message === "Dúvida não encontrada.") {
+        if (e.message === "Dï¿½vida nï¿½o encontrada.") {
             return res.status(404).json({ erro: e.message });
         }
         console.error("Erro em handleReadDuvidaById:", e);
-        res.status(500).json({ erro: "Erro ao buscar a dúvida." });
+        res.status(500).json({ erro: "Erro ao buscar a dï¿½vida." });
     }
 }
 
 async function handleUpdateDuvida(req, res) {
     try {
         const { id: duvidaId } = req.params;
-        const usuarioAutenticadoId = req.id; // ID do usuário autenticado
+        const usuarioAutenticadoId = req.id; // ID do usuï¿½rio autenticado
         const dadosUpdate = req.body; // { descricao, categoria_id, resolvida }
 
         const resultado = await duvidaService.updateDuvida(duvidaId, usuarioAutenticadoId, dadosUpdate);
         res.status(200).json(resultado);
     } catch (e) {
-        if (e.message.includes("não encontrada") || 
-            e.message.includes("Nenhum dado válido") ||
-            e.message.includes("Categoria fornecida para atualização não encontrada")) {
+        if (e.message.includes("nï¿½o encontrada") || 
+            e.message.includes("Nenhum dado vï¿½lido") ||
+            e.message.includes("Categoria fornecida para atualizaï¿½ï¿½o nï¿½o encontrada")) {
             return res.status(400).json({ erro: e.message });
         }
-        if (e.message.includes("não autorizado")) {
+        if (e.message.includes("nï¿½o autorizado")) {
             return res.status(403).json({ erro: e.message });
         }
         console.error("Erro em handleUpdateDuvida:", e);
@@ -86,12 +86,12 @@ async function handleDeleteDuvida(req, res) {
         const usuarioAutenticadoId = req.id;
 
         const resultado = await duvidaService.deleteDuvida(duvidaId, usuarioAutenticadoId);
-        res.status(200).json(resultado); // Ou status 204 se preferir não retornar corpo
+        res.status(200).json(resultado); // Ou status 204 se preferir nï¿½o retornar corpo
     } catch (e) {
-        if (e.message.includes("não encontrada")) {
+        if (e.message.includes("nï¿½o encontrada")) {
             return res.status(404).json({ erro: e.message });
         }
-        if (e.message.includes("não autorizado")) {
+        if (e.message.includes("nï¿½o autorizado")) {
             return res.status(403).json({ erro: e.message });
         }
         console.error("Erro em handleDeleteDuvida:", e);

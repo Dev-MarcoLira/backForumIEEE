@@ -1,4 +1,4 @@
-const categoriaService = require("../services/categoriaservice");
+const categoriaService = require("../services/categoriaService");
 
 async function handleCreateCategoria(req, res) {
     try {
@@ -6,7 +6,7 @@ async function handleCreateCategoria(req, res) {
         const resultado = await categoriaService.createCategoria(tipo);
         res.status(201).json(resultado);
     } catch (e) {
-        if (e.message.includes("obrigatório") || e.message.includes("já existe")) {
+        if (e.message.includes("obrigatï¿½rio") || e.message.includes("jï¿½ existe")) {
             return res.status(400).json({ erro: e.message });
         }
         console.error("Erro ao criar categoria:", e);
@@ -30,7 +30,7 @@ async function handleReadCategoriaById(req, res) {
         const categoria = await categoriaService.readCategoriaById(id);
         res.status(200).json({ categoria });
     } catch (e) {
-        if (e.message.includes("obrigatório") || e.message.includes("não encontrada")) {
+        if (e.message.includes("obrigatï¿½rio") || e.message.includes("nï¿½o encontrada")) {
             return res.status(404).json({ erro: e.message });
         }
         console.error("Erro ao buscar categoria por ID:", e);
@@ -45,7 +45,7 @@ async function handleUpdateCategoria(req, res) {
         const resultado = await categoriaService.updateCategoria(id, tipo);
         res.status(200).json(resultado);
     } catch (e) {
-        if (e.message.includes("obrigatório") || e.message.includes("não encontrada") || e.message.includes("já existe outra categoria com o nome")) {
+        if (e.message.includes("obrigatï¿½rio") || e.message.includes("nï¿½o encontrada") || e.message.includes("jï¿½ existe outra categoria com o nome")) {
             return res.status(400).json({ erro: e.message });
         }
         console.error("Erro ao atualizar categoria:", e);
@@ -59,10 +59,10 @@ async function handleDeleteCategoria(req, res) {
         const resultado = await categoriaService.deleteCategoria(id);
         res.status(200).json(resultado); // Ou 204 No Content
     } catch (e) {
-        if (e.message.includes("obrigatório") || e.message.includes("não encontrada")) {
+        if (e.message.includes("obrigatï¿½rio") || e.message.includes("nï¿½o encontrada")) {
             return res.status(404).json({ erro: e.message });
         }
-        if (e.message.includes("não pode ser deletada pois está associada")) {
+        if (e.message.includes("nï¿½o pode ser deletada pois estï¿½ associada")) {
             return res.status(409).json({ erro: e.message }); // 409 Conflict
         }
         console.error("Erro ao deletar categoria:", e);

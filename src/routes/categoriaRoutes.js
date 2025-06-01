@@ -1,6 +1,8 @@
 const router = require('express').Router();
-const categoriaController = require("../controller/categoriacontrolle");
-const authMiddleware = require("../middleware/auth"); // Seu middleware de autenticação
+
+const categoriaController = require("../controller/categoriaController");
+const authMiddleware = require("../middleware/auth");
+
 router.post("/api/categorias", authMiddleware, categoriaController.handleCreateCategoria);
 router.get("/api/categorias", categoriaController.handleReadAllCategorias);
 router.get("/api/categorias/:id", categoriaController.handleReadCategoriaById);

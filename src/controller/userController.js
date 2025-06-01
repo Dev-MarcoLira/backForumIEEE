@@ -1,4 +1,4 @@
-const userService = require("../services/usarService");
+const userService = require("../services/userService");
 
 // Handler para createUser
 async function handleCreateUser(req, res) {
@@ -7,11 +7,11 @@ async function handleCreateUser(req, res) {
         const resultado = await userService.createUser(nome, email, senha);
         res.status(201).json(resultado);
     } catch (e) {
-        if (e.message.includes("obrigatórios") || e.message.includes("Este email já está cadastrado")) {
+        if (e.message.includes("obrigatï¿½rios") || e.message.includes("Este email jï¿½ estï¿½ cadastrado")) {
             return res.status(400).json({ erro: e.message });
         }
         console.error("Erro no createUser:", e);
-        res.status(500).json({ erro: "Erro interno ao registrar usuário." });
+        res.status(500).json({ erro: "Erro interno ao registrar usuï¿½rio." });
     }
 }
 
@@ -22,81 +22,81 @@ async function handleLogin(req, res) {
         const resultado = await userService.login(email, senha);
         res.status(200).json(resultado);
     } catch (e) {
-        if (e.message.includes("Credenciais inválidas") || e.message.includes("obrigatórios")) {
-            return res.status(401).json({ erro: "Credenciais inválidas." });
+        if (e.message.includes("Credenciais invï¿½lidas") || e.message.includes("obrigatï¿½rios")) {
+            return res.status(401).json({ erro: "Credenciais invï¿½lidas." });
         }
         console.error("Erro no login:", e);
         res.status(500).json({ erro: "Erro interno ao tentar fazer login." });
     }
 }
 
-// Handler para readUser (obter perfil público de um usuário por ID)
+// Handler para readUser (obter perfil pï¿½blico de um usuï¿½rio por ID)
 async function handleReadUser(req, res) {
     try {
-        const { id } = req.params; // ID do usuário cujo perfil está sendo visualizado
+        const { id } = req.params; // ID do usuï¿½rio cujo perfil estï¿½ sendo visualizado
         const usuario = await userService.readUser(id);
         res.status(200).json({ usuario });
     } catch (e) {
-        if (e.message.includes("não encontrado") || e.message.includes("obrigatório")) {
+        if (e.message.includes("nï¿½o encontrado") || e.message.includes("obrigatï¿½rio")) {
             return res.status(404).json({ erro: e.message });
         }
-        console.error("Erro no readUser (perfil público):", e);
-        res.status(500).json({ erro: "Erro ao buscar perfil do usuário." });
+        console.error("Erro no readUser (perfil pï¿½blico):", e);
+        res.status(500).json({ erro: "Erro ao buscar perfil do usuï¿½rio." });
     }
 }
 
-// Handler para updateUser (usuário logado atualiza o próprio perfil)
+// Handler para updateUser (usuï¿½rio logado atualiza o prï¿½prio perfil)
 async function handleUpdateUser(req, res) {
     try {
-        // req.id é o ID do usuário autenticado (do token)
-        // req.body contém os dados para atualização (nome, email, senha nova)
+        // req.id ï¿½ o ID do usuï¿½rio autenticado (do token)
+        // req.body contï¿½m os dados para atualizaï¿½ï¿½o (nome, email, senha nova)
         const resultado = await userService.updateUser(req.id, req.body);
         res.status(200).json(resultado);
     } catch (e) {
-        if (e.message.includes("não encontrado") || e.message.includes("Nenhum dado válido") || e.message.includes("email já está em uso")) {
+        if (e.message.includes("nï¿½o encontrado") || e.message.includes("Nenhum dado vï¿½lido") || e.message.includes("email jï¿½ estï¿½ em uso")) {
             return res.status(400).json({ erro: e.message });
         }
-        console.error("Erro no updateUser (próprio perfil):", e);
+        console.error("Erro no updateUser (prï¿½prio perfil):", e);
         res.status(500).json({ erro: "Erro interno ao atualizar perfil." });
     }
 }
 
-// Handler para deleteUser (usuário logado deleta a própria conta)
+// Handler para deleteUser (usuï¿½rio logado deleta a prï¿½pria conta)
 async function handleDeleteUser(req, res) {
     try {
-        // req.id é o ID do usuário autenticado.
+        // req.id ï¿½ o ID do usuï¿½rio autenticado.
         const resultado = await userService.deleteUser(req.id);
         res.status(200).json(resultado);
     } catch (e) {
-        if (e.message.includes("não encontrado")) {
+        if (e.message.includes("nï¿½o encontrado")) {
             return res.status(404).json({ erro: e.message });
         }
-        console.error("Erro no deleteUser (própria conta):", e);
+        console.error("Erro no deleteUser (prï¿½pria conta):", e);
         res.status(500).json({ erro: "Erro interno ao deletar conta." });
     }
 }
 
-// Handler para obter dados da própria conta (mais detalhado que perfil público)
+// Handler para obter dados da prï¿½pria conta (mais detalhado que perfil pï¿½blico)
 async function handleObterPropriaConta(req, res) {
     try {
         const usuario = await userService.obterDadosPropriaConta(req.id); // req.id do authMiddleware
         res.status(200).json({ usuario });
     } catch (e) {
-        if (e.message.includes("não encontrado")) {
+        if (e.message.includes("nï¿½o encontrado")) {
             return res.status(404).json({ erro: e.message });
         }
-        console.error("Erro ao obter dados da própria conta:", e);
+        console.error("Erro ao obter dados da prï¿½pria conta:", e);
         res.status(500).json({ erro: "Erro interno ao buscar dados da conta." });
     }
 }
 
 module.exports = {
-    // Mantendo a nomenclatura que você pediu
+    // Mantendo a nomenclatura que vocï¿½ pediu
     login: handleLogin,
     createUser: handleCreateUser,
-    readUser: handleReadUser,     // Para /api/usuarios/:id/perfil (público)
-    updateUser: handleUpdateUser, // Para /api/conta (PUT, do próprio usuário)
-    deleteUser: handleDeleteUser, // Para /api/conta (DELETE, do próprio usuário)
+    readUser: handleReadUser,     // Para /api/usuarios/:id/perfil (pï¿½blico)
+    updateUser: handleUpdateUser, // Para /api/conta (PUT, do prï¿½prio usuï¿½rio)
+    deleteUser: handleDeleteUser, // Para /api/conta (DELETE, do prï¿½prio usuï¿½rio)
     
     // Handler adicional para a rota /api/conta (GET)
     handleObterPropriaConta,

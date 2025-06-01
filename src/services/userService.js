@@ -3,40 +3,40 @@ require('dotenv').config();
 const database = require("../database/exports");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
+const v4 = require('../utilitario/uuid');
 
 async function createUser(nome, email, senha) { // Mantido: createUser
     if (!nome || !email || !senha) {
-        throw new Error("Nome, email e senha são obrigatórios para o registro.");
+        throw new Error("Nome, email e senha sÃ£o obrigatÃ³rios para o registro.");
     }
     const emailExistente = await database("usuarios").where({ email }).first();
     if (emailExistente) {
-        throw new Error("Este email já está cadastrado.");
+        throw new Error("Este email jÃ¡ estÃ£o cadastrado.");
     }
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(senha, salt);
     const novoUsuario = {
-        id: crypto.randomUUID(),
+        id: v4(),
         nome,
         email,
         senha: hash,
     };
     await database("usuarios").insert(novoUsuario);
     const { senha: _, ...usuarioCriado } = novoUsuario;
-    return { message: "Usuário criado com sucesso.", usuario: usuarioCriado };
+    return { message: "Usuï¿½rio criado com sucesso.", usuario: usuarioCriado };
 }
 
 async function login(email, senha) { // Mantido: login
     if (!email || !senha) {
-        throw new Error("Email e senha são obrigatórios.");
+        throw new Error("Email e senha sÃ£o obrigatÃ³rios.");
     }
     const usuario = await database("usuarios").where({ email }).first();
     if (!usuario) {
-        throw new Error("Credenciais inválidas.");
+        throw new Error("Credenciais invÃ¡lidas.");
     }
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
     if (!senhaValida) {
-        throw new Error("Credenciais inválidas.");
+        throw new Error("Credenciais invÃ¡lidas.");
     }
     const token = jwt.sign(
         { id: usuario.id, email: usuario.email, nome: usuario.nome },
@@ -46,27 +46,27 @@ async function login(email, senha) { // Mantido: login
     return { token, usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email } };
 }
 
-// readUser agora busca um perfil público por ID
-async function readUser(idUsuario) { // Mantido: readUser (para perfil público)
+// readUser agora busca um perfil pï¿½blico por ID
+async function readUser(idUsuario) { // Mantido: readUser (para perfil pï¿½blico)
     if (!idUsuario) {
-        throw new Error("ID do usuário é obrigatório para buscar o perfil.");
+        throw new Error("ID do usuï¿½rio ï¿½ obrigatï¿½rio para buscar o perfil.");
     }
     const usuario = await database("usuarios")
-        .select("id", "nome", "criado_em" /* Adicione outros campos públicos aqui, ex: biografia, foto_perfil */)
+        .select("id", "nome", "criado_em" /* Adicione outros campos pï¿½blicos aqui, ex: biografia, foto_perfil */)
         .where({ id: idUsuario })
         .first();
     if (!usuario) {
-        throw new Error("Usuário não encontrado.");
+        throw new Error("Usuï¿½rio nï¿½o encontrado.");
     }
-    // Aqui você pode adicionar lógica para buscar estatísticas públicas do usuário,
-    // como número de dúvidas criadas, se desejar.
+    // Aqui vocï¿½ pode adicionar lï¿½gica para buscar estatï¿½sticas pï¿½blicas do usuï¿½rio,
+    // como nï¿½mero de dï¿½vidas criadas, se desejar.
     return usuario;
 }
 
-async function updateUser(idUsuarioAutenticado, dadosUpdate) { // Mantido: updateUser (para o próprio perfil)
+async function updateUser(idUsuarioAutenticado, dadosUpdate) { // Mantido: updateUser (para o prï¿½prio perfil)
     const usuarioExistente = await database("usuarios").where({ id: idUsuarioAutenticado }).first();
     if (!usuarioExistente) {
-        throw new Error("Usuário não encontrado para atualização (token inválido ou usuário deletado).");
+        throw new Error("Usuï¿½rio nï¿½o encontrado para atualizaï¿½ï¿½o (token invï¿½lido ou usuï¿½rio deletado).");
     }
 
     const atualizacoes = {};
@@ -79,7 +79,7 @@ async function updateUser(idUsuarioAutenticado, dadosUpdate) { // Mantido: updat
     if (dadosUpdate.hasOwnProperty('email') && dadosUpdate.email && dadosUpdate.email !== usuarioExistente.email) {
         const emailExistenteOutroUsuario = await database("usuarios").where({ email: dadosUpdate.email }).whereNot({ id: idUsuarioAutenticado }).first();
         if (emailExistenteOutroUsuario) {
-            throw new Error("Este email já está em uso por outro usuário.");
+            throw new Error("Este email jï¿½ estï¿½ em uso por outro usuï¿½rio.");
         }
         atualizacoes.email = dadosUpdate.email;
         algumaAtualizacaoValida = true;
@@ -91,7 +91,7 @@ async function updateUser(idUsuarioAutenticado, dadosUpdate) { // Mantido: updat
     }
 
     if (!algumaAtualizacaoValida) {
-        throw new Error("Nenhum dado válido fornecido para atualização ou os dados são iguais aos existentes.");
+        throw new Error("Nenhum dado vï¿½lido fornecido para atualizaï¿½ï¿½o ou os dados sï¿½o iguais aos existentes.");
     }
     atualizacoes.modificado_em = database.fn.now();
     await database("usuarios").where({ id: idUsuarioAutenticado }).update(atualizacoes);
@@ -100,23 +100,23 @@ async function updateUser(idUsuarioAutenticado, dadosUpdate) { // Mantido: updat
     return { message: "Perfil atualizado com sucesso.", usuario: usuarioAtualizado };
 }
 
-async function deleteUser(idUsuarioAutenticado) { // Mantido: deleteUser (para a própria conta)
+async function deleteUser(idUsuarioAutenticado) { // Mantido: deleteUser (para a prï¿½pria conta)
     const usuarioExistente = await database("usuarios").where({ id: idUsuarioAutenticado }).first();
     if (!usuarioExistente) {
-        throw new Error("Usuário não encontrado para deleção (token inválido ou usuário deletado).");
+        throw new Error("Usuï¿½rio nï¿½o encontrado para deleï¿½ï¿½o (token invï¿½lido ou usuï¿½rio deletado).");
     }
     await database("usuarios").where({ id: idUsuarioAutenticado }).del();
-    return { message: "Conta de usuário deletada com sucesso." };
+    return { message: "Conta de usuï¿½rio deletada com sucesso." };
 }
 
-// Função para obter dados da própria conta (mais completa que o perfil público)
+// Funï¿½ï¿½o para obter dados da prï¿½pria conta (mais completa que o perfil pï¿½blico)
 async function obterDadosPropriaConta(idUsuarioAutenticado) {
     const usuario = await database("usuarios")
-        .select("id", "nome", "email", "criado_em", "modificado_em") // Todos os campos relevantes para o usuário sobre si mesmo
+        .select("id", "nome", "email", "criado_em", "modificado_em") // Todos os campos relevantes para o usuï¿½rio sobre si mesmo
         .where({ id: idUsuarioAutenticado })
         .first();
     if (!usuario) {
-        throw new Error("Usuário não encontrado (token inválido ou usuário deletado).");
+        throw new Error("Usuï¿½rio nï¿½o encontrado (token invï¿½lido ou usuï¿½rio deletado).");
     }
     return usuario;
 }
@@ -125,8 +125,8 @@ async function obterDadosPropriaConta(idUsuarioAutenticado) {
 module.exports = {
     login,
     createUser,
-    readUser, // Para ler perfil público de um usuário por ID
-    updateUser, // Para o usuário logado atualizar o próprio perfil
-    deleteUser, // Para o usuário logado deletar a própria conta
-    obterDadosPropriaConta, // Para o usuário logado ver seus próprios dados de conta
+    readUser, // Para ler perfil pï¿½blico de um usuï¿½rio por ID
+    updateUser, // Para o usuï¿½rio logado atualizar o prï¿½prio perfil
+    deleteUser, // Para o usuï¿½rio logado deletar a prï¿½pria conta
+    obterDadosPropriaConta, // Para o usuï¿½rio logado ver seus prï¿½prios dados de conta
 };

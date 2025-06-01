@@ -1,9 +1,9 @@
 // src/routes/userRoutes.js
 const router = require('express').Router();
-const userController = require("../controller/userControlle");
+const userController = require("../controller/userController");
 const authMiddleware = require("../middleware/auth");
 
-// Rotas públicas
+// Rotas pÃºblicas
 router.post("/api/usuarios/login", userController.login);      
 router.post("/api/usuarios", userController.createUser);        
 router.get("/api/usuarios/:id/perfil", userController.readUser); 
