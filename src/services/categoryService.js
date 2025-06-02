@@ -1,66 +1,65 @@
 require('dotenv').config();
 const database = require("../database/exports"); 
-const crypto = require("crypto");
 const v4 = require('../utils/uuid');
 
 
-async function createCategoria(tipo) {
+async function createCategory(tipo) {
     if (!tipo || typeof tipo !== 'string' || tipo.trim() === '') {
-        throw new Error("O nome (tipo) da categoria é obrigatório e deve ser um texto.");
+        throw new Error("O nome (tipo) da category é obrigatório e deve ser um texto.");
     }
 
     const tipoFormatado = tipo.trim();
-    const categoriaExistente = await database("categorias").where({ tipo: tipoFormatado }).first();
-    if (categoriaExistente) {
-        throw new Error(`A categoria "${tipoFormatado}" já existe.`);
+    const categoryExistente = await database("categories").where({ tipo: tipoFormatado }).first();
+    if (categoryExistente) {
+        throw new Error(`A category "${tipoFormatado}" já existe.`);
     }
 
-    const novaCategoria = {
+    const novaCategory = {
         id: v4(),
         tipo: tipoFormatado,
     };
 
-    await database("categorias").insert(novaCategoria);
-    return { message: "Categoria criada com sucesso.", categoria: novaCategoria };
+    await database("categories").insert(novaCategory);
+    return { message: "Category criada com sucesso.", category: novaCategory };
 }
 
-async function readAllCategorias() {
-    const categorias = await database("categorias").select("id", "tipo", "criado_em", "modificado_em").orderBy("tipo", "asc");
-    return categorias; // Retorna array vazio se não houver categorias
+async function readAllCategories() {
+    const categorys = await database("categories").select("id", "tipo", "criado_em", "modificado_em").orderBy("tipo", "asc");
+    return categorys; // Retorna array vazio se não houver categorys
 }
 
-async function readCategoriaById(id) {
+async function readCategoryById(id) {
     if (!id) {
-        throw new Error("O ID da categoria é obrigatório.");
+        throw new Error("O ID da category é obrigatório.");
     }
-    const categoria = await database("categorias").select("id", "tipo", "criado_em", "modificado_em").where({ id }).first();
-    if (!categoria) {
-        throw new Error("Categoria não encontrada.");
+    const category = await database("categories").select("id", "tipo", "criado_em", "modificado_em").where({ id }).first();
+    if (!category) {
+        throw new Error("Category não encontrada.");
     }
-    return categoria;
+    return category;
 }
 
-async function updateCategoria(id, tipo) {
+async function updateCategory(id, tipo) {
     if (!id) {
-        throw new Error("O ID da categoria é obrigatório para atualização.");
+        throw new Error("O ID da category é obrigatório para atualização.");
     }
     if (!tipo || typeof tipo !== 'string' || tipo.trim() === '') {
-        throw new Error("O novo nome (tipo) da categoria é obrigatório.");
+        throw new Error("O novo nome (tipo) da category é obrigatório.");
     }
 
-    const categoriaExistente = await database("categorias").where({ id }).first();
-    if (!categoriaExistente) {
-        throw new Error("Categoria não encontrada para atualização.");
+    const categoryExistente = await database("categories").where({ id }).first();
+    if (!categoryExistente) {
+        throw new Error("Category não encontrada para atualização.");
     }
 
     const tipoFormatado = tipo.trim();
-    if (tipoFormatado !== categoriaExistente.tipo) {
-        const outraCategoriaComMesmoTipo = await database("categorias")
+    if (tipoFormatado !== categoryExistente.tipo) {
+        const outraCategoryComMesmoTipo = await database("categories")
             .where({ tipo: tipoFormatado })
             .whereNot({ id })
             .first();
-        if (outraCategoriaComMesmoTipo) {
-            throw new Error(`Já existe outra categoria com o nome "${tipoFormatado}".`);
+        if (outraCategoryComMesmoTipo) {
+            throw new Error(`Já existe outra category com o nome "${tipoFormatado}".`);
         }
     } else {
         // Se o tipo não mudou, não há necessidade de atualizar, a menos que você tenha outros campos.
@@ -74,38 +73,35 @@ async function updateCategoria(id, tipo) {
         modificado_em: database.fn.now(),
     };
 
-    await database("categorias").where({ id }).update(dadosAtualizacao);
+    await database("categories").where({ id }).update(dadosAtualizacao);
     
-    // Retornar a categoria atualizada
-    const categoriaAtualizada = await database("categorias").select("id", "tipo", "criado_em", "modificado_em").where({ id }).first();
-    return { message: "Categoria atualizada com sucesso.", categoria: categoriaAtualizada };
+    // Retornar a category atualizada
+    const categoryAtualizada = await database("categories").select("id", "tipo", "criado_em", "modificado_em").where({ id }).first();
+    return { message: "Category atualizada com sucesso.", category: categoryAtualizada };
 }
 
-async function deleteCategoria(id) {
+async function deleteCategory(id) {
     if (!id) {
-        throw new Error("O ID da categoria é obrigatório para deleção.");
+        throw new Error("O ID da category é obrigatório para deleção.");
     }
-    const categoriaExistente = await database("categorias").where({ id }).first();
-    if (!categoriaExistente) {
-        throw new Error("Categoria não encontrada para deleção.");
-    }
-
-    // Verificar se a categoria está sendo usada em alguma dúvida
-    // Isso é importante porque a coluna 'categoria_id' em 'duvidas' é NOT NULLABLE
-    // e a regra onDelete('SET NULL') da migration de dúvidas entraria em conflito.
-    const duvidasComEstaCategoria = await database("duvidas").where({ categoria_id: id }).first();
-    if (duvidasComEstaCategoria) {
-        throw new Error("Esta categoria não pode ser deletada pois está associada a uma ou mais dúvidas.");
+    const categoryExistente = await database("categories").where({ id }).first();
+    if (!categoryExistente) {
+        throw new Error("Category não encontrada para deleção.");
     }
 
-    await database("categorias").where({ id }).del();
-    return { message: "Categoria deletada com sucesso." };
+    const duvidasComEstaCategory = await database("questions").where({ category_id: id }).first();
+    if (duvidasComEstaCategory) {
+        throw new Error("Esta category não pode ser deletada pois está associada a uma ou mais dúvidas.");
+    }
+
+    await database("categories").where({ id }).del();
+    return { message: "Category deletada com sucesso." };
 }
 
 module.exports = {
-    createCategoria,
-    readAllCategorias,
-    readCategoriaById,
-    updateCategoria,
-    deleteCategoria,
+    createCategory,
+    readAllCategories,
+    readCategoryById,
+    updateCategory,
+    deleteCategory,
 };
