@@ -16,7 +16,7 @@ async function createCategoria(tipo) {
     }
 
     const novaCategoria = {
-        id: crypto.v4(),
+        id: v4(),
         tipo: tipoFormatado,
     };
 

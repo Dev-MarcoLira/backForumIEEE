@@ -18,7 +18,7 @@ async function createResposta(dadosResposta) {
     }
 
     const novaResposta = {
-        id: crypto.v4(),
+        id: v4(),
         descricao,
         duvida_id,
         usuario_id,
