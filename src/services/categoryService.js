@@ -1,7 +1,7 @@
 require('dotenv').config();
 const database = require("../database/exports"); 
 const crypto = require("crypto");
-const v4 = require('../utilitario/uuid');
+const v4 = require('../utils/uuid');
 
 
 async function createCategoria(tipo) {

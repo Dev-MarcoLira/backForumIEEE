@@ -2,7 +2,7 @@
 require('dotenv').config();
 const database = require("../database/exports"); // Certifique-se que o caminho está correto
 const crypto = require("crypto");
-const v4 = require('../utilitario/uuid');
+const v4 = require('../utils/uuid');
 
 async function createResposta(dadosResposta) {
     const { descricao, duvida_id, usuario_id } = dadosResposta;

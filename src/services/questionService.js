@@ -1,5 +1,5 @@
 require('dotenv').config();
-const  v4  = require('../utilitario/uuid'); 
+const  v4  = require('../utils/uuid'); 
 const database = require("../database/exports"); // Ajuste o caminho se necessário
 
 async function readDuvidas(filtros = {}) {
