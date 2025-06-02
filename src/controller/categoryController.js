@@ -1,4 +1,4 @@
-const categoriaService = require("../services/categoriaservice");
+const categoriaService = require("../services/categoryService");
 
 async function handleCreateCategoria(req, res) {
     try {

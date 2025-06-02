@@ -1,4 +1,4 @@
-const curtidaService = require("../services/curtidaService"); // Certifique-se que o caminho está correto
+const curtidaService = require("../services/likesService"); // Certifique-se que o caminho está correto
 
 async function handleLikeDuvida(req, res) {
     try {

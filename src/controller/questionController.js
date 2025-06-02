@@ -1,4 +1,4 @@
-const duvidaService = require("../services/duvidaservice"); // Ajuste o caminho se necessário
+const duvidaService = require("../services/questionService"); // Ajuste o caminho se necessário
 
 async function handleCreateDuvida(req, res) {
     try {
