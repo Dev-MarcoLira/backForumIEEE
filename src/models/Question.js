@@ -5,6 +5,11 @@ const findById = id =>
         .where({ id })
         .first()
 
+const findByCategoryId = categoryId =>
+    db('questions')
+        .where({ category_id: categoryId })
+        .then(rows => rows)
+
 const createQuestion = question =>
     db('questions')
         .insert(question)
@@ -57,5 +62,6 @@ module.exports = {
     deleteQuestion,
     updateQuestion,
     findByCategoryName,
+    findByCategoryId,
     findAll
 }
