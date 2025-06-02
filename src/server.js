@@ -11,11 +11,10 @@ const repliesRoutes = require("./routes/replies.js")
 const authRoutes = require("./routes/auth.js")
 const categoriesRoutes = require("./routes/categories.js")
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.SERVER_PORT || 3000;
+const HOST = process.env.SERVER_HOST || 'localhost';
 
 const app = express();
-const porta = process.env.SERVER_PORT || 3000;
-const host = process.env.SERVER_HOST || 'localhost';
 
 app.use(cors());
 app.use(express.json());
@@ -33,5 +32,5 @@ app.use("/api/auth", authRoutes);
 app.use("/api/conta", accountRoutes)
 app.use("/api/admin", adminRoutes)
 
-app.listen(PORT, 
+app.listen(PORT, HOST, 
     () => console.log(`Server is running on port ${PORT}`))
