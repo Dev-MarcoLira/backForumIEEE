@@ -14,6 +14,8 @@ const categoriesRoutes = require("./routes/categories.js")
 const PORT = process.env.PORT || 3000;
 
 const app = express();
+const porta = process.env.SERVER_PORT || 3000;
+const host = process.env.SERVER_HOST || 'localhost';
 
 app.use(cors());
 app.use(express.json());
