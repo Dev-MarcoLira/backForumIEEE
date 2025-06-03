@@ -54,6 +54,12 @@ router.post('/', authenticate, async (req, res) => {
 router.delete('/:id', authenticate, async (req, res) => {
     const { id } = req.params
     
+    const userId = req.user.id
+
+    if(id !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to update this question' })
+    }
+
     try {
         const deleted = await Question.deleteQuestion(id)
         
@@ -70,6 +76,12 @@ router.put('/:id', authenticate, async (req, res) => {
     const { id } = req.params
     const { title, content, categoryId } = req.body
     
+    const userId = req.user.id
+
+    if(id !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to update this question' })
+    }
+
     if (!title || !content || !categoryId) {
         return res.status(400).json({ error: 'Title, content and categoryId are required' })
     }

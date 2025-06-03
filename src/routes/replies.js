@@ -65,6 +65,12 @@ router.post('/', authenticate, async (req, res) => {
 router.delete('/:id', authenticate, async (req, res) => {
     const { id } = req.params
     
+    const userId = req.user.id
+
+    if (id !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to update this reply' })
+    }
+
     try {
         const deleted = await Reply.deleteReply(id)
 
@@ -82,10 +88,16 @@ router.put('/:id', authenticate, async (req, res) => {
     const { id } = req.params
     const { content } = req.body
     
+    const userId = req.user.id
+
+    if (id !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to update this reply' })
+    }
+
     if (!content) {
         return res.status(400).json({ error: 'Content is required' })
     }
-    
+
     try {
         const updatedReply = {
             content
