@@ -1,95 +1,16 @@
-const Question = require('../models/Question.js')
 const { authenticate } = require('../middleware/auth.js')
+const questionController = require('../controller/questionController.js')
 
 const router = require('express').Router();
 
-router.get('/', async (req, res) => {
-    try{
-        const questions = await Question.findAll()
-        res.json({ questions })
-    }catch (error) {
-        return res.status(500).json({ error: error.message || 'Error fetching questions' })
-    }
-})
+router.get('/', questionController.handleReadAllQuestions)
 
-router.get('/:id', async (req, res) => {
-    const { id } = req.params
-    try {
-        const question = await Question.findById(id)
-        
-        if (!question) 
-            return res.status(404).json({ error: 'Question not found' })
-        
-        res.json({ question })
-    }catch (error) {
-        return res.status(500).json({ error: error.message || 'Error fetching question' })
-    }
-    
-})
+router.get('/:id', questionController.handleReadQuestionById)
 
-router.post('/', authenticate, async (req, res) => {
-    
-    const { title, content, categoryId } = req.body
-    const userId = req.user.id
-    
-    if (!title || !content || !categoryId) {
-        return res.status(400).json({ error: error.message || 'Title and content are required' })
-    }
-    
-    try {
-        const newQuestion = {
-            title,
-            content,
-            "user_id": userId,
-            "category_id": categoryId,
-        }
-        
-        await Question.createQuestion(newQuestion)
-        res.status(201).json(newQuestion)
-    } catch (error) {
-        res.status(500).json({ error: error.message || 'Error creating question' })
-    }
-})
+router.post('/', authenticate, questionController.handleCreateQuestion)
 
-router.delete('/:id', authenticate, async (req, res) => {
-    const { id } = req.params
-    
-    try {
-        const deleted = await Question.deleteQuestion(id)
-        
-        if (!deleted) 
-            return res.status(404).json({ error: 'Question not found' })
-        
-        res.json({ message: 'Question deleted successfully' })
-    } catch (error) {
-        res.status(500).json({ error: error.message || 'Error deleting question' })
-    }
-})
+router.delete('/:id', authenticate, questionController.handleDeleteQuestion)
 
-router.put('/:id', authenticate, async (req, res) => {
-    const { id } = req.params
-    const { title, content, categoryId } = req.body
-    
-    if (!title || !content || !categoryId) {
-        return res.status(400).json({ error: 'Title, content and categoryId are required' })
-    }
-    
-    try {
-        const updatedQuestion = {
-            title,
-            content,
-            "category_id": categoryId,
-        }
-        
-        const updated = await Question.updateQuestion(id, updatedQuestion)
-        
-        if (!updated) 
-            return res.status(404).json({ error: 'Question not found' })
-        
-        res.json({ updatedQuestion })
-    } catch (error) {
-        res.status(500).json({ error: error.message || 'Error updating question' })
-    }
-})
+router.put('/:id', authenticate, questionController.handleUpdateQuestion)
 
 module.exports = router

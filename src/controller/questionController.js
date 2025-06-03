@@ -1,108 +1,79 @@
-const duvidaService = require("../services/questionService"); // Ajuste o caminho se necessário
+const questionService = require("../services/questionService"); // Ajuste o caminho se necessário
 
-async function handleCreateDuvida(req, res) {
+async function handleCreateQuestion(req, res) {
     try {
-        const { descricao, categoria_id } = req.body;
-        const usuario_id = req.id; // ID do usuário vindo do middleware de autenticação
+        const { title, content, categoryId } = req.body
+        const userId = req.user.id; 
 
-        // O service já trata a obrigatoriedade da descrição e usuario_id
-        const resultado = await duvidaService.createDuvida(descricao, usuario_id, categoria_id);
-        // O service retorna "Dúvida criada com sucesso" ou um objeto. Padronizar o retorno do service seria bom.
-        // Assumindo que queremos retornar uma mensagem e talvez o ID da nova dúvida:
-        if (typeof resultado === 'string') { // Se o service retornar apenas a mensagem
-            res.status(201).json({ message: resultado });
-        } else { // Se o service retornar um objeto (ex: com a nova dúvida)
+        const resultado = await questionService.createQuestion(title, content, categoryId, userId);
+       
             res.status(201).json(resultado);
-        }
     } catch (e) {
-        // Tratar erros específicos do service, se necessário
-        if (e.message.includes("obrigatórios") || e.message.includes("Categoria não encontrada")) {
-            return res.status(400).json({ erro: e.message });
-        }
-        console.error("Erro em handleCreateDuvida:", e);
-        res.status(500).json({ erro: e.message });
+        res.status(500).json({ error: e.message || "Erro ao criar a dúvida." });
     }
 }
 
-async function handleReadAllDuvidas(req, res) {
+async function handleReadAllQuestions(req, res) {
     try {
-        // Passa todos os query params (req.query) como o objeto 'filtros' para o service.
-        // O service já tem valores padrão para page, limit, sortBy, order.
-        // Outros query params como categoria_id, usuario_id, resolvida, termoDeBusca
-        // devem ser tratados dentro da função readDuvidas no service, inclusive na countQueryBuilder.
-        const resultadoPaginado = await duvidaService.readDuvidas(req.query);
+        const resultadoPaginado = await questionService.readAllQuestions();
         res.status(200).json(resultadoPaginado);
     } catch (e) {
-        console.error("Erro em handleReadAllDuvidas:", e);
-        res.status(500).json({ erro: "Erro ao buscar dívidas." });
+        res.status(500).json({ error: e.message || "Erro ao buscar as dúvidas." });
     }
 }
 
-async function handleReadDuvidaById(req, res) {
+async function handleReadQuestionById(req, res) {
     try {
         const { id } = req.params;
-        // opções para ordenação de respostas podem vir da query string
-        // Ex: /api/duvidas/ID_DA_DUVIDA?sortByRespostas=curtidas&orderRespostas=DESC
-        const opcoesRespostas = {
-            sortBy: req.query.sortByRespostas, // O service espera 'sortBy' e 'order'
-            order: req.query.orderRespostas,
-        };
-        const duvida = await duvidaService.readDuvidaById(id, opcoesRespostas);
+        
+        const duvida = await questionService.readQuestionById(id);
+
+        if (!duvida) {
+            return res.status(404).json({ error: "Dúvida não encontrada." });
+        }
         res.status(200).json(duvida);
     } catch (e) {
-        if (e.message === "Dúvida não encontrada.") {
-            return res.status(404).json({ erro: e.message });
-        }
-        console.error("Erro em handleReadDuvidaById:", e);
-        res.status(500).json({ erro: "Erro ao buscar a dúvida." });
+        res.status(500).json({ error: e.message || "Erro ao buscar a dúvida." });
     }
 }
 
-async function handleUpdateDuvida(req, res) {
+async function handleUpdateQuestion(req, res) {
     try {
-        const { id: duvidaId } = req.params;
-        const usuarioAutenticadoId = req.id; // ID do usuário autenticado
-        const dadosUpdate = req.body; // { descricao, categoria_id, resolvida }
+        const { id } = req.params
+        const { title, content, categoryId } = req.body
+        const userId = req.user.id;
 
-        const resultado = await duvidaService.updateDuvida(duvidaId, usuarioAutenticadoId, dadosUpdate);
+        const resultado = await questionService.updateQuestion(id, title, content, categoryId, userId);
+        if (!resultado) {
+            return res.status(404).json({ error: "Dúvida não encontrada." });
+        }
         res.status(200).json(resultado);
     } catch (e) {
-        if (e.message.includes("não encontrada") || 
-            e.message.includes("Nenhum dado válido") ||
-            e.message.includes("Categoria fornecida para atualização não encontrada")) {
-            return res.status(400).json({ erro: e.message });
-        }
-        if (e.message.includes("não autorizado")) {
-            return res.status(403).json({ erro: e.message });
-        }
-        console.error("Erro em handleUpdateDuvida:", e);
-        res.status(500).json({ erro: e.message });
+        res.status(500).json({ error: e.message || "Erro ao atualizar a dúvida." });
     }
 }
 
-async function handleDeleteDuvida(req, res) {
+async function handleDeleteQuestion(req, res) {
     try {
-        const { id: duvidaId } = req.params;
-        const usuarioAutenticadoId = req.id;
+        const { id } = req.params;
+        const userId = req.user.id;
 
-        const resultado = await duvidaService.deleteDuvida(duvidaId, usuarioAutenticadoId);
-        res.status(200).json(resultado); // Ou status 204 se preferir não retornar corpo
+        const resultado = await questionService.deleteQuestion(id, userId);
+
+        if(!resultado) {
+            return res.status(404).json({ error: e.message || "Dúvida não encontrada." });
+        }
+
+        res.status(200).json(resultado);
     } catch (e) {
-        if (e.message.includes("não encontrada")) {
-            return res.status(404).json({ erro: e.message });
-        }
-        if (e.message.includes("não autorizado")) {
-            return res.status(403).json({ erro: e.message });
-        }
-        console.error("Erro em handleDeleteDuvida:", e);
-        res.status(500).json({ erro: e.message });
+        res.status(500).json({ error: e.message || "Erro ao deletar a dúvida." });
     }
 }
 
 module.exports = {
-    handleCreateDuvida,
-    handleReadAllDuvidas,
-    handleReadDuvidaById,
-    handleUpdateDuvida,
-    handleDeleteDuvida,
+    handleCreateQuestion,
+    handleReadAllQuestions,
+    handleReadQuestionById,
+    handleUpdateQuestion,
+    handleDeleteQuestion
 };
