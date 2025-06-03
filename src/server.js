@@ -10,6 +10,8 @@ const questionRoutes = require("./routes/questions.js")
 const repliesRoutes = require("./routes/replies.js")
 const authRoutes = require("./routes/auth.js")
 const categoriesRoutes = require("./routes/categories.js")
+const questionsLikesRoutes = require("./routes/questionsLikes.js")
+const repliesLikesRoutes = require("./routes/repliesLikes.js")
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,11 +24,11 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/api", defaultRoutes);
 app.use("/api/duvidas", questionRoutes);
+app.use("/api/duvidas/curtidas", questionsLikesRoutes);
 app.use("/api/respostas", repliesRoutes);
+app.use("/api/respostas/curtidas", repliesLikesRoutes);
 app.use("/api/categorias", categoriesRoutes);
 app.use("/api/auth", authRoutes);
-
-// Protected Routes
 
 app.use("/api/conta", accountRoutes)
 app.use("/api/admin", adminRoutes)
