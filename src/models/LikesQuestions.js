@@ -14,12 +14,7 @@ const findById = id =>
 const createLike = (questionId, userId) =>
     db('questions_likes')
         .insert({ question_id: questionId, user_id: userId })
-        .then(rows => {
-            if (rows.length === 0) {
-                throw new Error('Error creating like');
-            }
-            return rows[0];
-        });
+        .then(() => ({ questionId, userId }));
 
 const deleteLike = (questionId, userId) =>
     db('questions_likes')

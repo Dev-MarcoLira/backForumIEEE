@@ -1,6 +1,7 @@
 const router = require('express').Router();
+const { authenticate } = require('../middleware/auth');
 const LikesQuestions = require('../models/LikesQuestions');
-const Questions = require('../models/Question');
+const Question = require('../models/Question');
 
 router.get('/:questionId', async (req, res) => {
     const { questionId } = req.params;
@@ -18,28 +19,30 @@ router.get('/:questionId', async (req, res) => {
     }
 });
 
-router.post('/:questionId', async (req, res) => {
+router.post('/:questionId', authenticate, async (req, res) => {
     const { questionId } = req.params;
 
     const userId = req.user.id;
 
-    const question = Questions.findById(questionId);
+    const question = await Question.findById(questionId);
 
-    if(!question) {
+    if(!question) 
         return res.status(404).json({ error: 'Question not found' });
-    }
+    
+    if(await LikesQuestions.findById(questionId, userId))
+        return res.status(400).json({ error: 'You have already liked this question' });
 
     try{
-        LikesQuestions.createLike(questionId, userId);
+        const like = await LikesQuestions.createLike(questionId, userId);
 
-        res.status(201).json({ like: 1 });
+        res.status(201).json(like);
     }catch(e){
         res.status(500).json({ error: e.message || 'Error creating like' });
     }
 
 })
 
-router.delete('/:questionId', async (req, res) => {
+router.delete('/:questionId', authenticate, async (req, res) => {
     const { questionId } = req.params;
     const userId = req.user.id;
 
