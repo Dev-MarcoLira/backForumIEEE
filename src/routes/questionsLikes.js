@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const LikesQuestions = require('../models/LikesQuestions');
+const Questions = require('../models/Question');
 
 router.get('/:questionId', async (req, res) => {
     const { questionId } = req.params;
@@ -16,6 +17,27 @@ router.get('/:questionId', async (req, res) => {
         return res.status(500).json({ error: error.message || 'Error fetching likes for question' });
     }
 });
+
+router.post('/:questionId', async (req, res) => {
+    const { questionId } = req.params;
+
+    const userId = req.user.id;
+
+    const question = Questions.findById(questionId);
+
+    if(!question) {
+        return res.status(404).json({ error: 'Question not found' });
+    }
+
+    try{
+        LikesQuestions.createLike(questionId, userId);
+
+        res.status(201).json({ like: 1 });
+    }catch(e){
+        res.status(500).json({ error: e.message || 'Error creating like' });
+    }
+
+})
 
 router.delete('/:questionId', async (req, res) => {
     const { questionId } = req.params;

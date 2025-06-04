@@ -11,6 +11,16 @@ const findById = id =>
             return rows[0].likesCount;
         })
 
+const createLike = (questionId, userId) =>
+    db('questions_likes')
+        .insert({ question_id: questionId, user_id: userId })
+        .then(rows => {
+            if (rows.length === 0) {
+                throw new Error('Error creating like');
+            }
+            return rows[0];
+        });
+
 const deleteLike = (questionId, userId) =>
     db('questions_likes')
         .where({ question_id: questionId, user_id: userId })
@@ -24,5 +34,6 @@ const deleteLike = (questionId, userId) =>
 
 module.exports = {
     findById,
-    deleteLike
+    deleteLike,
+    createLike
 };
