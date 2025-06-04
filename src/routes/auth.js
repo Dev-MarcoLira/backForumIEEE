@@ -6,7 +6,7 @@ const router = require('express').Router()
 
 // Register route
 
-router.post('/register', async (req, res) => {
+router.post('/cadastro', async (req, res) => {
     
     const { name, username, password, role } = req.body
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -15,15 +15,14 @@ router.post('/register', async (req, res) => {
         name,
         username,
         password: hashedPassword,
-        role: role || 'user',
     }
 
     try {
         
         await User.createUser(user)        
         res.status(201).json({ 
-            username,
-            role
+            user,
+            role: 'user'
         })
     } catch (error) {
         res.status(500).json({ error: 'Error creating user' })
