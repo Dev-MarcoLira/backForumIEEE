@@ -38,4 +38,4 @@ router.delete('/:questionId', async (req, res) => {
     }
 });
 
-export default router
+module.exports = router;
