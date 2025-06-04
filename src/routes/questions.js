@@ -27,6 +27,36 @@ router.get('/:id', async (req, res) => {
     
 })
 
+router.patch('/:id/resolver', authenticate, async (req, res) => {
+    const { id } = req.params
+
+    const userId = req.user.id
+    
+    const question = await Question.findById(id)
+
+    if(!question) {
+        return res.status(404).json({ error: 'Question not found' })
+    }
+
+    if(question.userId !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to resolve this question' })
+    }
+
+    try{
+
+        const resolvedQuestion = await Question.resolveQuestion(id)
+        
+        if (!resolvedQuestion) 
+            return res.status(404).json({ error: 'Question not found' })
+        
+        res.json({ resolvedQuestion })
+
+    }catch(error) {
+        return res.status(500).json({ error: error.message || 'Error resolving question' })
+    }
+
+})
+
 router.post('/', authenticate, async (req, res) => {
     
     const { title, content, categoryId } = req.body
