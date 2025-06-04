@@ -8,14 +8,16 @@ const router = require('express').Router()
 
 router.post('/register', async (req, res) => {
     
-    const { name, username, password, role } = req.body
+    const { name, username, password } = req.body
     const hashedPassword = await bcrypt.hash(password, 10)
 
     const user = {
         name,
         username,
         password: hashedPassword,
-        role: role || 'user',
+        role: 'user', 
+        /* Por padrão é sempre user. Para ser adm, vamos alterar via banco de dados... 
+        Mas isso não vai ser implementado agora...*/
     }
 
     try {
