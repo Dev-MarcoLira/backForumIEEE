@@ -7,7 +7,7 @@ router.get('/:questionId', async (req, res) => {
     const { questionId } = req.params;
     try {
         
-        const likes = LikesQuestions.findById(questionId)
+        const likes = await LikesQuestions.findById(questionId)
 
         if (!likes) {
             return res.status(404).json({ error: 'No likes found for this question' });
