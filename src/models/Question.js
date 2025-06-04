@@ -4,6 +4,19 @@ const findById = id =>
     db('questions')
         .where({ id })
         .first()
+        .then(row => {
+            if (!row) return null
+            return {
+                id: row.id,
+                title: row.title,
+                categoryId: row.category_id,
+                category: row.category_description,
+                content: row.content,
+                userId: row.user_id,
+                createdAt: row.created_at,
+                updatedAt: row.updated_at
+            }
+        })
 
 const createQuestion = question =>
     db('questions')
@@ -37,7 +50,8 @@ const findAll = () =>
             'q.title', 
             'q.category_id',
             'c.description as category_description', 
-            'q.content', 
+            'q.content',
+            'q.user_id',
             'q.created_at', 
             'q.updated_at'
         )
@@ -48,6 +62,7 @@ const findAll = () =>
             category: row.category_description,
             content: row.content,
             createdAt: row.created_at,
+            userId: row.user_id,
             updatedAt: row.updated_at
         })))
 
