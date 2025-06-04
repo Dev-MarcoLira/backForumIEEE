@@ -6,7 +6,7 @@ const router = require('express').Router()
 
 // Register route
 
-router.post('/register', async (req, res) => {
+router.post('/cadastro', async (req, res) => {
     
     const { name, username, password } = req.body
     const hashedPassword = await bcrypt.hash(password, 10)
