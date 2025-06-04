@@ -1,11 +1,13 @@
 const router = require('express').Router();
+const { authenticate } = require('../middleware/auth');
 const LikesReplies = require('../models/LikesReplies');
+const Reply = require('../models/Reply');
 
 router.get('/:replyId', async (req, res) => {
     const { replyId } = req.params;
     try {
         
-        const likes = LikesReplies.findById(replyId)
+        const likes = await LikesReplies.findById(replyId)
 
         if (!likes) {
             return res.status(404).json({ error: 'No likes found for this Reply' });
@@ -17,7 +19,29 @@ router.get('/:replyId', async (req, res) => {
     }
 });
 
-router.delete('/:replyId', async (req, res) => {
+router.post('/:replyId', authenticate, async (req, res) => {
+    const { replyId } = req.params;
+
+    const userId = req.user.id;
+
+    const reply = await Reply.findById(replyId);
+
+    if(!reply) 
+        return res.status(404).json({ error: 'reply not found' });
+
+    if(await LikesReplies.findById(replyId, userId))
+        return res.status(400).json({ error: 'You have already liked this reply' });
+
+    try{
+        const like = await LikesReplies.createLike(replyId, userId);
+
+        res.status(201).json(like);
+    }catch(e){
+        res.status(500).json({ error: e.message || 'Error creating like' });
+    }
+})
+
+router.delete('/:replyId', authenticate, async (req, res) => {
     const { replyId } = req.params;
     const userId = req.user.id;
 
