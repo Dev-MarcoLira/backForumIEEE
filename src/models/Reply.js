@@ -21,6 +21,17 @@ const findById = id =>
     db('replies')
         .where({ id })
         .first()
+        .then(row => {
+            if (!row) return null
+            return {
+                id: row.id,
+                content: row.content,
+                questionId: row.question_id,
+                userId: row.user_id,
+                createdAt: row.created_at,
+                updatedAt: row.updated_at
+            }
+        })
 
 const findByQuestionId = questionId =>
     db('replies')
