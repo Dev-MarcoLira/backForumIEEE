@@ -67,7 +67,12 @@ router.delete('/:id', authenticate, async (req, res) => {
     
     const userId = req.user.id
 
-    if (id !== userId) {
+    const reply = await Reply.findById(id)
+    if (!reply) {
+        return res.status(404).json({ error: 'Reply not found' })
+    }
+
+    if (reply.userId !== userId) {
         return res.status(403).json({ error: 'You are not authorized to update this reply' })
     }
 
@@ -90,7 +95,12 @@ router.put('/:id', authenticate, async (req, res) => {
     
     const userId = req.user.id
 
-    if (id !== userId) {
+    const reply = await Reply.findById(id)
+    if (!reply) {
+        return res.status(404).json({ error: 'Reply not found' })
+    }
+
+    if (reply.userId !== userId) {
         return res.status(403).json({ error: 'You are not authorized to update this reply' })
     }
 
