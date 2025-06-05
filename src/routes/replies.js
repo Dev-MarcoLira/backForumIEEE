@@ -21,7 +21,7 @@ router.get('/:id', async (req, res) => {
         
         res.json({ reply })
     }catch (error) {
-        return res.status(500).json({ error: 'Error fetching reply' })
+        return res.status(500).json({ error: error.message || 'Error fetching reply' })
     }
     
 })
@@ -31,11 +31,11 @@ router.get('/pergunta/:questionId', async (req, res) => {
     try {
         const replies = await Reply.findByQuestionId(questionId)
         if (!replies || replies.length === 0) 
-            return res.status(404).json({ error: 'No replies found for this question' })
+            return res.status(404).json({ error: error.message || 'No replies found for this question' })
         
         res.json({ replies })
     } catch (error) {
-        return res.status(500).json({ error: 'Error fetching replies for question' })
+        return res.status(500).json({ error: error.message || 'Error fetching replies for question' })
     }
 })
 
@@ -45,7 +45,7 @@ router.post('/', authenticate, async (req, res) => {
     const userId = req.user.id
     
     if (!content || !questionId) {
-        return res.status(400).json({ error: 'Content and questionId are required' })
+        return res.status(400).json({ error: error.message || 'Content and questionId are required' })
     }
     
     try {
@@ -65,6 +65,17 @@ router.post('/', authenticate, async (req, res) => {
 router.delete('/:id', authenticate, async (req, res) => {
     const { id } = req.params
     
+    const userId = req.user.id
+
+    const reply = await Reply.findById(id)
+    if (!reply) {
+        return res.status(404).json({ error: 'Reply not found' })
+    }
+
+    if (reply.userId !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to update this reply' })
+    }
+
     try {
         const deleted = await Reply.deleteReply(id)
 
@@ -82,10 +93,21 @@ router.put('/:id', authenticate, async (req, res) => {
     const { id } = req.params
     const { content } = req.body
     
+    const userId = req.user.id
+
+    const reply = await Reply.findById(id)
+    if (!reply) {
+        return res.status(404).json({ error: 'Reply not found' })
+    }
+
+    if (reply.userId !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to update this reply' })
+    }
+
     if (!content) {
         return res.status(400).json({ error: 'Content is required' })
     }
-    
+
     try {
         const updatedReply = {
             content

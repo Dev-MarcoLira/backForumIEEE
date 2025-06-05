@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
         const questions = await Question.findAll()
         res.json({ questions })
     }catch (error) {
-        return res.status(500).json({ error: 'Error fetching questions' })
+        return res.status(500).json({ error: error.message || 'Error fetching questions' })
     }
 })
 
@@ -22,9 +22,39 @@ router.get('/:id', async (req, res) => {
         
         res.json({ question })
     }catch (error) {
-        return res.status(500).json({ error: 'Error fetching question' })
+        return res.status(500).json({ error: error.message || 'Error fetching question' })
     }
     
+})
+
+router.patch('/:id/resolver', authenticate, async (req, res) => {
+    const { id } = req.params
+
+    const userId = req.user.id
+    
+    const question = await Question.findById(id)
+
+    if(!question) {
+        return res.status(404).json({ error: 'Question not found' })
+    }
+
+    if(question.userId !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to resolve this question' })
+    }
+
+    try{
+
+        const resolvedQuestion = await Question.resolveQuestion(id)
+        
+        if (!resolvedQuestion) 
+            return res.status(404).json({ error: 'Question not found' })
+        
+        res.json({ resolvedQuestion })
+
+    }catch(error) {
+        return res.status(500).json({ error: error.message || 'Error resolving question' })
+    }
+
 })
 
 router.post('/', authenticate, async (req, res) => {
@@ -33,7 +63,7 @@ router.post('/', authenticate, async (req, res) => {
     const userId = req.user.id
     
     if (!title || !content || !categoryId) {
-        return res.status(400).json({ error: 'Title and content are required' })
+        return res.status(400).json({ error: error.message || 'Title and content are required' })
     }
     
     try {
@@ -54,6 +84,17 @@ router.post('/', authenticate, async (req, res) => {
 router.delete('/:id', authenticate, async (req, res) => {
     const { id } = req.params
     
+    const userId = req.user.id
+
+    const question = await Question.findById(id)
+
+    if(!question)
+        return res.status(404).json({ error: 'Question not found' })
+
+    if(question.userId !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to update this question' })
+    }
+
     try {
         const deleted = await Question.deleteQuestion(id)
         
@@ -70,6 +111,18 @@ router.put('/:id', authenticate, async (req, res) => {
     const { id } = req.params
     const { title, content, categoryId } = req.body
     
+    const userId = req.user.id
+
+    const question = await Question.findById(id)
+
+    if(!question) {
+        return res.status(404).json({ error: 'Question not found' })
+    }
+
+    if(question.userId !== userId) {
+        return res.status(403).json({ error: 'You are not authorized to update this question' })
+    }
+
     if (!title || !content || !categoryId) {
         return res.status(400).json({ error: 'Title, content and categoryId are required' })
     }
