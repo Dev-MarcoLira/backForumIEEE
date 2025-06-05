@@ -63,7 +63,7 @@ router.post('/', authenticate, async (req, res) => {
     const userId = req.user.id
     
     if (!title || !content || !categoryId) {
-        return res.status(400).json({ error: error.message || 'Title and content are required' })
+        return res.status(400).json({ error: 'Title and content are required' })
     }
     
     try {
@@ -101,9 +101,9 @@ router.delete('/:id', authenticate, async (req, res) => {
         if (!deleted) 
             return res.status(404).json({ error: 'Question not found' })
         
-        res.json({ message: 'Question deleted successfully' })
+        return res.json({ message: 'Question deleted successfully' })
     } catch (error) {
-        res.status(500).json({ error: error.message || 'Error deleting question' })
+        return res.status(500).json({ error: error.message || 'Error deleting question' })
     }
 })
 
@@ -139,9 +139,9 @@ router.put('/:id', authenticate, async (req, res) => {
         if (!updated) 
             return res.status(404).json({ error: 'Question not found' })
         
-        res.json({ updatedQuestion })
+        return res.json({ updatedQuestion })
     } catch (error) {
-        res.status(500).json({ error: error.message || 'Error updating question' })
+        return res.status(500).json({ error: error.message || 'Error updating question' })
     }
 })
 

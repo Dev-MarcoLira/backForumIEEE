@@ -45,7 +45,7 @@ router.post('/', authenticate, async (req, res) => {
     const userId = req.user.id
     
     if (!content || !questionId) {
-        return res.status(400).json({ error: error.message || 'Content and questionId are required' })
+        return res.status(400).json({ error: 'Content and questionId are required' })
     }
     
     try {
@@ -85,7 +85,7 @@ router.delete('/:id', authenticate, async (req, res) => {
         res.json({ message: 'Reply deleted successfully' })
 
     }catch(error){
-        return res.status(500).json({ error: error.message || 'Error deleting reply' })
+        res.status(500).json({ error: error.message || 'Error deleting reply' })
     }
 })
 
@@ -117,9 +117,9 @@ router.put('/:id', authenticate, async (req, res) => {
         if (!updated) 
             return res.status(404).json({ error: 'Reply not found' })
         
-        res.json({ updatedReply })
+        return res.json({ updatedReply })
     } catch (error) {
-        res.status(500).json({ error: error.message || 'Error updating reply' })
+        return res.status(500).json({ error: error.message || 'Error updating reply' })
     }
 })
 
