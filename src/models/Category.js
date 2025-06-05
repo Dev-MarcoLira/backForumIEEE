@@ -1,41 +1,39 @@
-const db = require('../db/knex.js')
+const db = require('../db/knex.js'); // Verifique se o caminho está correto
 
-const findById = id =>
-    db('categories')
-        .where({ id })
-        .first()
+// 1. Criamos um objeto principal para agrupar todas as funções.
+const Category = {
 
-const createCategory = category =>
-    db('categories')
-        .insert(category)
-        .then(rows => rows[0])
+    // 2. Definimos a função 'create' com o nome que a rota espera.
+    // Usamos 'async/await' que é mais moderno e limpo que '.then()'.
+    async create(categoryData) {
+        try {
+            // 'categoryData' será o objeto { description: "..." }
+            const [id] = await db('categories').insert(categoryData);
+            return db('categories').where({ id }).first();
+        } catch (error) {
+            // Re-lança o erro para ser capturado pelo 'catch' do controller.
+            throw error;
+        }
+    },
 
-const deleteCategory = id =>
-    db('categories')
-        .where({ id })
-        .del()
-        .then(count => count > 0)
+    async findById(id) {
+        return db('categories').where({ id }).first();
+    },
 
-const updateCategory = (id, category) =>
-    db('categories')
-        .where({ id })
-        .update(category)
-        .then(count => count > 0)
+    async findAll() {
+        return db('categories').select('*').orderBy('description');
+    },
 
-const findAll = () =>
-    db('categories')
-        .select('id', 'description', 'created_at', 'updated_at')
-        .then(rows => rows.map(row => ({
-            id: row.id,
-            description: row.description,
-            createdAt: row.created_at,
-            updatedAt: row.updated_at
-        })))
+    async update(id, categoryData) {
+        const count = await db('categories').where({ id }).update(categoryData);
+        return count > 0; // Retorna true se atualizou, false se não
+    },
 
-module.exports = {
-    findById,
-    createCategory,
-    deleteCategory,
-    updateCategory,
-    findAll
-}
+    async delete(id) {
+        const count = await db('categories').where({ id }).del();
+        return count > 0; // Retorna true se deletou, false se não
+    }
+};
+
+// 3. Exportamos o objeto 'Category' completo.
+module.exports = Category;
