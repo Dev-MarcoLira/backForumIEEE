@@ -3,15 +3,11 @@ const db = require('../db/knex.js'); // Verifique se o caminho está correto
 // 1. Criamos um objeto principal para agrupar todas as funções.
 const Category = {
 
-    // 2. Definimos a função 'create' com o nome que a rota espera.
-    // Usamos 'async/await' que é mais moderno e limpo que '.then()'.
     async create(categoryData) {
         try {
-            // 'categoryData' será o objeto { description: "..." }
             const [id] = await db('categories').insert(categoryData);
             return db('categories').where({ id }).first();
         } catch (error) {
-            // Re-lança o erro para ser capturado pelo 'catch' do controller.
             throw error;
         }
     },
@@ -35,5 +31,4 @@ const Category = {
     }
 };
 
-// 3. Exportamos o objeto 'Category' completo.
 module.exports = Category;
