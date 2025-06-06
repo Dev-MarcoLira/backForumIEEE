@@ -26,26 +26,6 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-// router.post('/', authenticate, async (req, res) => {
-//      console.log("BACKEND RECEBEU no req.body:", req.body);
-//     const { name } = req.body
-    
-//     if (!name) {
-//         return res.status(400).json({ error: 'Name is required' })
-//     }
-    
-//     try {
-//         const newCategory = {
-//             description: name,
-//         }
-        
-//         await Category.createCategory(newCategory)
-//         res.status(201).json(newCategory)
-//     } catch (error) {
-//         res.status(500).json({ error: error.message || 'Error creating category' })
-//     }
-// })
-
 router.post('/', authenticate, async (req, res) => {
     const { description } = req.body;
 
@@ -55,30 +35,21 @@ router.post('/', authenticate, async (req, res) => {
 
     try {
         const newCategory = await Category.create({ description });
-        // Se chegar aqui, o sucesso é garantido
-        res.status(201).json(newCategory);
 
+        res.status(201).json(newCategory);
     } catch (error) {
-        // --- LÓGICA DE ERRO MELHORADA ---
- 
-        // 1. Loga o erro COMPLETO e DETALHADO no console do backend.
         console.error("### ERRO DETALHADO NO BACKEND AO CRIAR CATEGORIA ###");
         console.error(error); 
 
-        // 2. Verifica se o erro é REALMENTE de duplicidade
-        // (Procura por palavras-chave que os bancos de dados usam para isso)
         if (error.message.includes('UNIQUE constraint') || 
-            error.message.includes('já existe') || 
+            error.message.includes('already exists') ||
+
             error.code === 'SQLITE_CONSTRAINT' // Específico para SQLite
         ) {
             return res.status(409).json({ message: `A categoria "${description}" já existe.` });
         }
-
-        // 3. Para TODOS os outros erros, retorna um erro 500 (Erro Interno do Servidor)
-        //    Isso indica um problema inesperado no nosso código do backend.
         return res.status(500).json({ 
             message: "Erro interno no servidor ao tentar criar a categoria. Verifique os logs do backend.",
-            // Inclui a mensagem de erro real para facilitar a depuração no frontend
             error: error.message 
         });
     }
