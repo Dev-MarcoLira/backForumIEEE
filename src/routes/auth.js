@@ -22,8 +22,7 @@ router.post('/cadastro', async (req, res) => {
         
         await User.createUser(user)        
         res.status(201).json({ 
-            user,
-            role: 'user'
+            user
         })
 
     } catch (error) {
