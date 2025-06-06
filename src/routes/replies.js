@@ -25,12 +25,12 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.get('/pergunta/:questionId', async (req, res) => {
+router.get('/duvida/:questionId', async (req, res) => {
     const { questionId } = req.params
     try {
         const replies = await Reply.findByQuestionId(questionId)
         if (!replies || replies.length === 0) 
-            return res.status(404).json({ error: error.message || 'No replies found for this question' })
+            return res.status(404).json({ error: 'No replies found for this question' })
         
         res.json({ replies })
     } catch (error) {
