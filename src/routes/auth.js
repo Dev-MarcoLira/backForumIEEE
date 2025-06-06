@@ -15,10 +15,7 @@ router.post('/cadastro', async (req, res) => {
         name,
         username,
         password: hashedPassword,
-        role: 'user', 
-        /* Por padrão é sempre user. Para ser adm, vamos alterar via banco de dados... 
-        Mas isso não vai ser implementado agora...*/
-
+        role: 'user', // Default role
     }
 
     try {
@@ -61,11 +58,9 @@ router.post('/login', async (req, res) => {
             process.env.JWT_SECRET, 
             { expiresIn: `${24 * 5}h` }
         )
-        // **A CORREÇÃO ESTÁ AQUI**
-        // 1. Crie uma cópia do objeto 'user' para não modificar o original
+
         const { password: _, ...userSemSenha } = user;
 
-        // 2. Envie o token E o usuário sem a senha na resposta
         res.status(200).json({ token, user: userSemSenha })
     } catch (error) {
         res.status(500).json({ error: error.message || 'Error logging in' })
