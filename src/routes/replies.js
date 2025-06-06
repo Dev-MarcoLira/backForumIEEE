@@ -23,7 +23,6 @@ router.get('/:id', async (req, res) => {
     }catch (error) {
         return res.status(500).json({ error: error.message || 'Error fetching reply' })
     }
-    
 })
 
 router.get('/pergunta/:questionId', async (req, res) => {
@@ -55,8 +54,8 @@ router.post('/', authenticate, async (req, res) => {
             "user_id": userId,
         }
         
-        await Reply.createReply(newReply)
-        res.status(201).json(newReply)
+        const reply = await Reply.createReply(newReply)
+        res.status(201).json(reply)
     } catch (error) {
         res.status(500).json({ error: error.message || 'Error creating reply' })
     }

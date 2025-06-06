@@ -74,8 +74,8 @@ router.post('/', authenticate, async (req, res) => {
             "category_id": categoryId,
         }
         
-        await Question.createQuestion(newQuestion)
-        res.status(201).json(newQuestion)
+        const question = await Question.createQuestion(newQuestion)
+        res.status(201).json(question)
     } catch (error) {
         res.status(500).json({ error: error.message || 'Error creating question' })
     }
