@@ -1,33 +1,51 @@
-const db = require('../db/knex.js'); // Verifique se o caminho está correto
+const { v4 } = require('uuid');
+const db = require('../db/knex.js');
 
-// 1. Criamos um objeto principal para agrupar todas as funções.
+const TABLE_NAME = 'categories';
+
 const Category = {
 
     async create(categoryData) {
+
+        const id = v4()
+
         try {
-            const [id] = await db('categories').insert(categoryData);
-            return db('categories').where({ id }).first();
+            await db(`${TABLE_NAME}`)
+                .insert({ ...categoryData, id})
+
+            return this.findById(id);
+
         } catch (error) {
             throw error;
         }
     },
 
     async findById(id) {
-        return db('categories').where({ id }).first();
+        return db(`${TABLE_NAME}`)
+            .where({ id })
+            .first();
     },
 
     async findAll() {
-        return db('categories').select('*').orderBy('description');
+        return db(`${TABLE_NAME}`)
+            .select('*')
+            .orderBy('description');
     },
 
     async update(id, categoryData) {
-        const count = await db('categories').where({ id }).update(categoryData);
-        return count > 0; // Retorna true se atualizou, false se não
+        const count = await db(`${TABLE_NAME}`)
+            .where({ id })
+            .update(categoryData)
+
+        return count > 0;
     },
 
     async delete(id) {
-        const count = await db('categories').where({ id }).del();
-        return count > 0; // Retorna true se deletou, false se não
+        const count = await db(`${TABLE_NAME}`)
+            .where({ id })
+            .del();
+
+        return count > 0;
     }
 };
 
