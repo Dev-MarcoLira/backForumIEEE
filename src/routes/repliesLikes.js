@@ -10,7 +10,7 @@ router.get('/:replyId', async (req, res) => {
         const likes = await LikesReplies.findById(replyId)
 
         if (!likes) {
-            return res.status(404).json({ error: 'No likes found for this Reply' });
+            return res.status(404).json({ likes: 0 });
         }
 
         res.json({ likes });
@@ -18,6 +18,23 @@ router.get('/:replyId', async (req, res) => {
         return res.status(500).json({ error: error.message || 'Error fetching likes for Reply' });
     }
 });
+
+router.get('/:replyId/user/:userId', authenticate, async(req, res) =>{
+    const { replyId, userId } = req.params
+
+    try{
+
+        const isLiked = await LikesReplies.findByUserId(replyId, userId) ?
+            1 : 0
+
+        if(!isLiked)
+            res.status(200).json({ liked: false })
+
+        res.status(204).json({ liked: true })
+    }catch(error){
+        res.status(500).json({ error: error.message})
+    }
+})
 
 router.post('/:replyId', authenticate, async (req, res) => {
     const { replyId } = req.params;
