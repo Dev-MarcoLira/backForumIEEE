@@ -8,6 +8,11 @@ const findByUsername = username =>
         .where({ username })
         .first()
 
+const findByIds = ids =>
+    db(`${TABLE_NAME}`)
+        .whereIn('id', ids)
+        .select('id', 'name', 'username');
+
 const findById = id => 
     db(`${TABLE_NAME}`)
         .where({ id })
@@ -62,5 +67,6 @@ module.exports = {
     deleteUser,
     updateUser,
     findAll,
+    findByIds,
     findById
 }

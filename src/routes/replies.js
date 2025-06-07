@@ -17,7 +17,7 @@ router.get('/:id', async (req, res) => {
     try {
         const reply = await Reply.findById(id)
         if (!reply) 
-            return res.status(404).json({ error: 'Reply not found' })
+            return res.status(200).json({ error: 'Reply not found' })
         
         res.json(reply)
     }catch (error) {
@@ -30,7 +30,7 @@ router.get('/duvida/:questionId', async (req, res) => {
     try {
         const replies = await Reply.findByQuestionId(questionId)
         if (!replies || replies.length === 0) 
-            return res.status(404).json({ error: 'No replies found for this question' })
+            return res.status(200).json({ error: 'No replies found for this question' })
         
         res.json(replies)
     } catch (error) {

@@ -6,6 +6,10 @@ const router = require('express').Router();
 router.get('/', async (req, res) => {
     try{
         const questions = await Question.findAll()
+
+        if(!questions)
+            res.status(200).json({ error: 'no question found'})
+
         res.json(questions)
     }catch (error) {
         return res.status(500).json({ error: error.message || 'Error fetching questions' })
@@ -18,7 +22,7 @@ router.get('/:id', async (req, res) => {
         const question = await Question.findById(id)
         
         if (!question) 
-            return res.status(404).json({ error: 'Question not found' })
+            return res.status(200).json({ error: 'Question not found' })
         
         res.json(question)
     }catch (error) {

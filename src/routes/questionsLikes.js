@@ -10,7 +10,7 @@ router.get('/:questionId', async (req, res) => {
         const likes = await LikesQuestions.findById(questionId)
 
         if (!likes) {
-            return res.status(404).json({ likes: 0 });
+            return res.status(200).json({ likes: 0 });
         }
 
         res.json({ likes });

@@ -18,7 +18,7 @@ router.get('/:id', async (req, res) => {
         const category = await Category.findById(id)
         
         if (!category) 
-            return res.status(404).json({ error: error.message || 'Category not found' })
+            return res.status(404).json({ error: 'Category not found' })
         
         res.json(category)
     } catch (error) {
