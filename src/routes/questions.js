@@ -6,7 +6,7 @@ const router = require('express').Router();
 router.get('/', async (req, res) => {
     try{
         const questions = await Question.findAll()
-        res.json({ questions })
+        res.json(questions)
     }catch (error) {
         return res.status(500).json({ error: error.message || 'Error fetching questions' })
     }
@@ -20,7 +20,7 @@ router.get('/:id', async (req, res) => {
         if (!question) 
             return res.status(404).json({ error: 'Question not found' })
         
-        res.json({ question })
+        res.json(question)
     }catch (error) {
         return res.status(500).json({ error: error.message || 'Error fetching question' })
     }
@@ -49,7 +49,7 @@ router.patch('/:id/resolver', authenticate, async (req, res) => {
         if (!resolvedQuestion) 
             return res.status(404).json({ error: 'Question not found' })
         
-        res.json({ resolvedQuestion })
+        res.json(resolvedQuestion)
 
     }catch(error) {
         return res.status(500).json({ error: error.message || 'Error resolving question' })
@@ -139,7 +139,7 @@ router.put('/:id', authenticate, async (req, res) => {
         if (!updated) 
             return res.status(404).json({ error: 'Question not found' })
         
-        return res.json({ updatedQuestion })
+        return res.json(updatedQuestion)
     } catch (error) {
         return res.status(500).json({ error: error.message || 'Error updating question' })
     }

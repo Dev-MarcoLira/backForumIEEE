@@ -6,7 +6,7 @@ const router = require('express').Router();
 router.get('/', async (req, res) => {
     try {
         const categories = await Category.findAll()
-        res.json({ categories })
+        res.json(categories)
     } catch (error) {
         res.status(500).json({ error: error.message || 'Error fetching categories' })
     }
@@ -20,7 +20,7 @@ router.get('/:id', async (req, res) => {
         if (!category) 
             return res.status(404).json({ error: error.message || 'Category not found' })
         
-        res.json({ category })
+        res.json(category)
     } catch (error) {
         res.status(500).json({ error: error.message || 'Error fetching category' })
     }
@@ -88,7 +88,7 @@ router.put('/:id', authenticate, async (req, res) => {
         if (!updated) 
             return res.status(404).json({ error: 'Category not found' })
         
-        res.json({ updatedCategory })
+        res.json(updatedCategory)
     } catch (error) {
         res.status(500).json({ error: error.message || 'Error updating category' })
     }
