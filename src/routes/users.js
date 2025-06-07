@@ -44,7 +44,7 @@ router.post('/batch', async (req, res) => {
         const users = await User.findByIds(ids)
 
         if(!users)
-            res.status(404).json({ error: 'No users found' })
+            res.status(404).json([])
 
         return res.status(200).json(users)
 

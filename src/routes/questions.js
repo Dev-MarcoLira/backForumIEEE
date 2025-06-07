@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
         const questions = await Question.findAll()
 
         if(!questions)
-            res.status(200).json({ error: 'no question found'})
+            res.status(200).json([])
 
         res.json(questions)
     }catch (error) {

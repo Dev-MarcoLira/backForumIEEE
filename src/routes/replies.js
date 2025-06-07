@@ -6,6 +6,10 @@ const router = require('express').Router();
 router.get('/', async(req, res) => {
     try {
         const replies = await Reply.findAll()
+
+        if(!replies)
+            res.status(200).json([])
+
         res.json(replies)
     } catch (error) {
         return res.status(500).json({ error: error.message || 'Error fetching replies' })
@@ -30,7 +34,7 @@ router.get('/duvida/:questionId', async (req, res) => {
     try {
         const replies = await Reply.findByQuestionId(questionId)
         if (!replies || replies.length === 0) 
-            return res.status(200).json({ error: 'No replies found for this question' })
+            return res.status(200).json([])
         
         res.json(replies)
     } catch (error) {
