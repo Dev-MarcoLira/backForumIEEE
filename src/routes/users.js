@@ -2,7 +2,7 @@ const { authenticate } = require('../middleware/auth')
 const User = require('../models/User')
 const router = require('express').Router()
 
-router.get('/:userId', authenticate, async (req, res) => {
+router.get('/:userId', async (req, res) => {
 
     const {userId} = req.params
 

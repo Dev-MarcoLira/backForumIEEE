@@ -58,6 +58,13 @@ const findByCategoryName = categoryName =>
         .select(`${TABLE_NAME}.*`)
         .then(rows => rows)
 
+const findByTitle = title =>
+    db(`${TABLE_NAME} as q`)
+        .where('q.title', 'LIKE', `%${title}%`)
+        .select('q.*')
+        .then(rows => rows)
+
+
 const findAll = () =>
     db(`${TABLE_NAME} as q`)
         .innerJoin('categories as c', 'q.category_id', 'c.id')
@@ -91,5 +98,6 @@ module.exports = {
     updateQuestion,
     findByCategoryName,
     findAll,
+    findByTitle,
     resolveQuestion
 }

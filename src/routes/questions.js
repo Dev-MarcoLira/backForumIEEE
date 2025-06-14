@@ -4,15 +4,31 @@ const { authenticate } = require('../middleware/auth.js')
 const router = require('express').Router();
 
 router.get('/', async (req, res) => {
-    try{
-        const questions = await Question.findAll()
+    const title = req.query.titulo
 
-        if(!questions)
-            res.status(200).json([])
+    if(!title){
+        try{
+            const questions = await Question.findAll()
 
-        res.json(questions)
-    }catch (error) {
-        return res.status(500).json({ error: error.message || 'Error fetching questions' })
+            if(!questions)
+                res.status(200).json([])
+
+            res.json(questions)
+        }catch (error) {
+            return res.status(500).json({ error: error.message || 'Error fetching questions' })
+        }
+    }else{
+
+        try{
+            const questions = await Question.findByTitle(title)
+
+            if(!questions)
+                res.status(200).json([])
+
+            res.json(questions)
+        }catch (error) {
+            return res.status(500).json({ error: error.message || 'Error fetching questions' })
+        }
     }
 })
 
